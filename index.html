@@ -1689,6 +1689,7 @@ function showPage(page, push){
     pushedSantaPage = santa;
   }
   window.scrollTo(0, 0);
+  if (typeof refreshPlayed === "function") refreshPlayed();
   requestAnimationFrame(function(){
     window.dispatchEvent(new Event("resize"));
     window.dispatchEvent(new Event("scroll"));
@@ -1997,11 +1998,16 @@ function renderPublicRoster(){
     chip.textContent = n;
     if (interactive){
       chip.setAttribute("aria-label", "Voir mon résultat : " + n);
-      chip.addEventListener("click", function(){ goToSantaFor(n); });
+      // Check the shared list first, so an elf who has just played on another
+      // phone isn't opened from a page that was loaded earlier.
+      chip.addEventListener("click", function(){
+        refreshPlayed().then(function(){ goToSantaFor(n); });
+      });
     } else {
       chip.setAttribute("aria-label", n);
     }
     box.appendChild(chip);
+    if (interactive && typeof isPlayed === "function" && isPlayed(n)){ chip.classList.add("elf-chip-played"); chip.disabled = true; chip.setAttribute("aria-label", n + " (déjà joué)"); }
   }
   var ordered = ELF_ORDER.filter(function(n){ return STATE.names.indexOf(n) !== -1; });
   STATE.names.forEach(function(n){ if (ordered.indexOf(n) === -1) ordered.push(n); });
@@ -2884,6 +2890,7 @@ document.getElementById("redrawBtn").addEventListener("click", async function(){
 renderPublicRoster();
 populateNameSelect();
 refreshPlayed();
+setInterval(function(){ if (!document.hidden) refreshPlayed(); }, 20000);
 
 })();
 </script>
