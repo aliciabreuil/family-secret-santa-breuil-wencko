@@ -2468,9 +2468,12 @@ function populateNameSelect(){
   var remaining = STATE.names.filter(function(n){ return !isPlayed(n); });
   var allDone = STATE.names.length > 0 && remaining.length === 0;
   sel.innerHTML = '<option value="" disabled' + (current ? "" : " selected") + '>' + (allDone ? "Tout le monde a joué !" : "Quel lutin es-tu ?") + '</option>';
-  remaining.forEach(function(n){
+  // Names already played stay in the list, greyed out and not selectable.
+  STATE.names.forEach(function(n){
     var opt = document.createElement("option");
-    opt.value = n; opt.textContent = n;
+    opt.value = n;
+    if (isPlayed(n)){ opt.textContent = n + " — déjà joué"; opt.disabled = true; }
+    else opt.textContent = n;
     sel.appendChild(opt);
   });
   if (current && remaining.indexOf(current) !== -1) sel.value = current;
