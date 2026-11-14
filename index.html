@@ -1,5 +1,6 @@
 <!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>Secret Santa Breuil-Wenckowski</title>
+<meta name="theme-color" content="#0d1830">
 <meta name="description" content="Le Secret Santa de la famille Breuil-Wenckowski : choisis ton prénom et découvre qui tu dois gâter cette année.">
 <meta property="og:title" content="Secret Santa Breuil-Wenckowski">
 <meta property="og:description" content="Le Père Noël tient la liste de la famille. Viens voir si ton nom y figure.">
@@ -60,8 +61,11 @@
    footer) are simply ignored by this and scroll normally once reached. */
 html{scroll-snap-type:y mandatory;}
 html,body{margin:0;padding:0;}
+/* Night blue under everything, so the bottom of the page, the area behind
+   Safari's toolbar and any overscroll never show white. */
+html{background-color:#0d1830;}
 body{
-  background:radial-gradient(ellipse 120% 60% at 50% -5%, var(--night-2), var(--night-1) 55%);
+  background:var(--night-1) radial-gradient(ellipse 120% 60% at 50% -5%, var(--night-2), var(--night-1) 55%);
   color:var(--snow);
   font-family:'Raleway',system-ui,sans-serif;
   overflow-x:hidden;
