@@ -66,6 +66,9 @@ html,body{margin:0;padding:0;}
 html{background-color:#0d1830;}
 /* Santa's page starts on the fireside's near-black instead. */
 html:has(body.page-santa){background-color:#120c0d;}
+/* Safari on iPhone colours its status bar from the page background, so the
+   body itself switches too (theme-color alone is ignored by recent Safari). */
+body.page-santa{background:#120c0d;}
 body{
   background:var(--night-1) radial-gradient(ellipse 120% 60% at 50% -5%, var(--night-2), var(--night-1) 55%);
   color:var(--snow);
