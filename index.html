@@ -295,6 +295,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   filter:drop-shadow(0 2px 12px rgba(0,0,0,.65));
 }
 .hero p.lede{max-width:560px;margin:0 auto;color:rgba(247,245,239,.92);font-size:1.08rem;text-shadow:0 2px 8px rgba(0,0,0,.7);}
+/* Warning under the paragraph: each name can only be played once. */
+.hero p.lede-warning{max-width:560px;margin:12px auto 0;color:var(--brand-gold-light);font-weight:700;font-size:1.02rem;text-shadow:0 2px 8px rgba(0,0,0,.7);}
 
 /* ---------- stage: Santa's workshop diorama ---------- */
 /* scroll-snap-align (no -stop): now that the hero text moved onto the video
@@ -619,6 +621,7 @@ body.page-santa .back-link{display:inline-flex;}
   #workshopTransition .hero-title{order:1;position:relative;z-index:2;text-align:center;padding:6px 4.5vw 10px;font-size:4.5vw;}
   #workshopTransition .hero .kicker{font-size:1.05em;margin-bottom:.1em;}
   #workshopTransition .hero h1{font-size:1.75em;margin:0;line-height:1.05;}
+  #workshopTransition .hero p.lede-warning{order:4;position:relative;z-index:2;text-align:center;font-size:.95rem;margin:10px 0 0;padding:0 22px;}
   #workshopTransition .hero p.lede{order:3;position:relative;z-index:2;text-align:center;font-size:.98rem;line-height:1.5;max-width:none;margin:14px 0 0;padding:0 22px;}
   #workshopTransition .scroll-next-btn{display:none;}
   body.page-santa #workshopTransition{padding-top:76px;}
@@ -726,6 +729,7 @@ body.page-santa .back-link{display:inline-flex;}
         <h1>Le Père Noël a besoin de toi !</h1>
       </div>
       <p class="lede">Choisis ton prénom dans la liste ci-dessous : le Père Noël te révélera la personne à qui tu dois offrir un cadeau cette année. Chut, personne ne peut savoir qui sera l'heureux destinataire de ta surprise !</p>
+      <p class="lede-warning">Attention ! Un prénom ne peut être joué qu'une seule fois !</p>
     </div>
     <button class="scroll-next-btn" type="button" data-scroll-target="#stageSection" aria-label="Continuer">
       <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
