@@ -64,6 +64,8 @@ html,body{margin:0;padding:0;}
 /* Night blue under everything, so the bottom of the page, the area behind
    Safari's toolbar and any overscroll never show white. */
 html{background-color:#0d1830;}
+/* Santa's page starts on the fireside's near-black instead. */
+html:has(body.page-santa){background-color:#120c0d;}
 body{
   background:var(--night-1) radial-gradient(ellipse 120% 60% at 50% -5%, var(--night-2), var(--night-1) 55%);
   color:var(--snow);
@@ -1688,6 +1690,9 @@ function isSantaHash(){ return /pere-noel|reveal=/.test(window.location.hash || 
 function showPage(page, push){
   var santa = page === "santa";
   document.body.classList.toggle("page-santa", santa);
+  // Safari tints its status bar and toolbar with this; match the page shown.
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) themeMeta.setAttribute("content", santa ? "#120c0d" : "#0d1830");
   if (push){
     history.pushState({page: page}, "", santa ? "#pere-noel" : window.location.pathname + window.location.search);
     pushedSantaPage = santa;
