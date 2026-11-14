@@ -2405,9 +2405,9 @@ window.addEventListener("resize", function(){
    Claims are stored under the current draw, so a new draw starts empty. The
    list is only switched on where PLAYED_DB is filled in (the GitHub Pages copy);
    elsewhere the site behaves as before. */
-var PLAYED_DB = {projectId: "", apiKey: ""};
+var PLAYED_DB = {projectId: "secret-santa-app-c53e5", apiKey: ""};
 var playedNames = [];
-function playedEnabled(){ return !!(PLAYED_DB.projectId && PLAYED_DB.apiKey); }
+function playedEnabled(){ return !!PLAYED_DB.projectId; }
 function drawId(){
   var str = Object.keys(STATE.assignments || {}).sort().map(function(k){ return STATE.assignments[k].payload; }).join("|");
   var h = 5381;
@@ -2417,7 +2417,7 @@ function drawId(){
 function playedUrl(extra){
   return "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(PLAYED_DB.projectId) +
     "/databases/(default)/documents/draws/" + drawId() + "/played" + (extra || "") +
-    ((extra || "").indexOf("?") === -1 ? "?" : "&") + "key=" + encodeURIComponent(PLAYED_DB.apiKey);
+    (PLAYED_DB.apiKey ? ((extra || "").indexOf("?") === -1 ? "?" : "&") + "key=" + encodeURIComponent(PLAYED_DB.apiKey) : "");
 }
 function isPlayed(name){ return playedNames.indexOf(name) !== -1; }
 function applyPlayed(){
