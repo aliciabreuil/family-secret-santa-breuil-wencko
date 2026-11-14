@@ -1,0 +1,2884 @@
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>Secret Santa Breuil-Wenckowski</title>
+<meta name="description" content="Le Secret Santa de la famille Breuil-Wenckowski : choisis ton prénom et découvre qui tu dois gâter cette année.">
+<meta property="og:title" content="Secret Santa Breuil-Wenckowski">
+<meta property="og:description" content="Le Père Noël tient la liste de la famille. Viens voir si ton nom y figure.">
+<meta property="og:image" content="https://aliciabreuil.github.io/family-secret-santa-breuil-wencko/assets/preview.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Glass+Antiqua&family=Mountains+of+Christmas:wght@400;700&family=Raleway:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600&display=swap">
+<meta property="og:url" content="https://aliciabreuil.github.io/family-secret-santa-breuil-wencko/">
+<meta name="twitter:card" content="summary_large_image">
+</head><body>
+<style>
+:root{
+  /* Brand palette, taken from the site's own scenes:
+     Nuit (night sky)   Bleu roi (sleigh, countdown)   Rouge Père Noël
+     Or (lights, numbers)   Neige (snow, paper)   Sapin (fir)   Encre (ink).
+     Every button is built from these (see "buttons"). */
+  --brand-night:#0d1830;
+  --brand-royal:#1c2f74;
+  --brand-red:#c0392b;
+  --brand-red-dark:#96281e;
+  --brand-gold:#e3b04b;
+  --brand-gold-light:#f2d48b;
+  --brand-gold-deep:#b8861b;
+  --brand-snow:#f7f5ef;
+  --brand-fir:#1f6b52;
+  --brand-fir-light:#2a8a69;
+  --brand-ink:#1b2436;
+  --seam:clamp(56px, 11vh, 110px);
+  --night-1:#0d1830;
+  --night-2:#1b2d53;
+  --night-3:#315474;
+  --aurora:#97adab;
+  --aurora-pink:#d5857c;
+  --candle:var(--brand-gold);
+  --candle-dim:#c1885d;
+  --berry:var(--brand-red);
+  --berry-dark:var(--brand-red-dark);
+  --pine:var(--brand-fir);
+  --pine-light:var(--brand-fir-light);
+  --snow:#f7f5ef;
+  --snow-dim:#e9e4d6;
+  --ink:#1b2436;
+  --ink-soft:#4a5268;
+  --gold:var(--brand-gold-light);
+  --rose:#d5857c;
+  --stage-wood:#5a3826;
+  --stage-wood-dark:#3e2619;
+  --shadow:rgba(10,15,35,.45);
+  --radius-lg:28px;
+  --radius-md:18px;
+  --radius-sm:10px;
+}
+*{box-sizing:border-box;}
+/* The timeline, the two new transition videos, and the elves roster are each a
+   full-screen "slide" — mandatory snap means a scroll or swipe always settles
+   on one of them rather than stopping halfway, and scroll-snap-stop:always
+   (set per-slide below) stops a fast flick from skipping a slide entirely.
+   Sections with no scroll-snap-align (the hero text, Santa's workshop,
+   footer) are simply ignored by this and scroll normally once reached. */
+html{scroll-snap-type:y mandatory;}
+html,body{margin:0;padding:0;}
+body{
+  background:radial-gradient(ellipse 120% 60% at 50% -5%, var(--night-2), var(--night-1) 55%);
+  color:var(--snow);
+  font-family:'Raleway',system-ui,sans-serif;
+  overflow-x:hidden;
+  position:relative;
+  min-height:100vh;
+}
+h1,h2{
+  font-family:'Yeseva One','Raleway',system-ui,sans-serif;
+  font-weight:500;
+  text-wrap:balance;
+  letter-spacing:.1px;
+}
+p{line-height:1.55;}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+button{font-family:inherit;cursor:pointer;}
+input{font-family:inherit;}
+a{color:var(--brand-gold-light);}
+
+#snowfield{position:fixed;inset:0;width:100%;height:100%;z-index:40;pointer-events:none;}
+#snowfield.indoors{visibility:hidden;}
+#snowfield.indoors > div{animation-play-state:paused;}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative;z-index:2;}
+
+/* ---------- header ---------- */
+header.site{
+  display:flex;align-items:center;justify-content:flex-start;
+  padding:18px 24px;position:absolute;top:0;left:0;right:0;z-index:5;
+}
+/* ---------- buttons ----------
+   One family, four kinds, all pills in the brand palette:
+   primary  Rouge Père Noël with a gold hairline   (.btn, Entrer, .to-santa-btn)
+   gold     Or with ink text                        (.btn.gold)
+   ghost    night glass, snow text, gold edge       (header links, chevrons,
+            .btn.secondary, name chips)
+   outline  on light surfaces, Bleu roi             (cards and dialogs)
+   Every focus ring is gold. */
+.btn, .to-santa-btn, .intro-enter-btn{
+  border:none;border-radius:999px;font-family:inherit;font-weight:800;letter-spacing:.2px;
+  background:var(--brand-red);color:var(--brand-snow);text-decoration:none;cursor:pointer;
+  box-shadow:0 10px 22px -10px rgba(192,57,43,.85), inset 0 0 0 1px rgba(227,176,75,.55);
+  transition:transform .15s, background .2s, box-shadow .2s;
+}
+.btn:hover, .to-santa-btn:hover, .intro-enter-btn:hover{background:var(--brand-red-dark);box-shadow:0 12px 26px -10px rgba(192,57,43,.95), inset 0 0 0 1px rgba(242,212,139,.85);}
+.back-link, .btn.secondary{
+  display:inline-flex;align-items:center;gap:8px;border-radius:999px;font-family:inherit;font-weight:700;
+  color:var(--brand-snow);text-decoration:none;cursor:pointer;
+  background:rgba(13,24,48,.45);border:1px solid rgba(227,176,75,.45);box-shadow:none;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  transition:background .2s, border-color .2s, transform .2s;
+}
+.back-link:hover, .btn.secondary:hover{
+  background:rgba(13,24,48,.72);border-color:var(--brand-gold);
+}
+.back-link{padding:9px 16px;font-size:.85rem;}
+.back-link{display:none;}
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible{outline:3px solid var(--brand-gold);outline-offset:3px;}
+
+/* ---------- tracker (page-wide) ---------- */
+/* The first full-screen slide: exactly the viewport's height (not the video's
+   own 16:9 aspect ratio, as this used to be sized) so it reads as "the whole
+   screen" the instant the intro dismisses, same as the two video transition
+   slides and the elves section. object-fit:cover on the video crops top/bottom
+   or sides as needed to fill that box at any aspect ratio — an acceptable
+   trade a plain scrolled section didn't have to make, but expected for a
+   full-bleed hero slide. */
+.tracker{
+  position:relative;width:100%;height:100vh;z-index:1;overflow:hidden;
+  background-color:var(--night-1);
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.tracker-video-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;z-index:0;
+}
+.tracker::before{
+  content:"";position:absolute;inset:0;z-index:1;
+  /* Fades to the exact same solid var(--night-1) that .roster-section's own
+     ::before fades UP to at its top edge, so the two full-screen slides meet at
+     matching solid color with no visible seam or divider between them — the
+     video simply dissolves into darkness rather than looking cut off mid-frame.
+     The countdown curve sits well above this darkened lower stretch. */
+  background:linear-gradient(180deg, rgba(11,23,51,.25) 0%, rgba(11,23,51,.08) 20%, rgba(11,23,51,.08) 100%);
+  pointer-events:none;
+}
+.tracker .eyebrow{
+  /* Kept near the top: the countdown's curve peaks just below it. */
+  position:absolute;top:6px;left:50%;transform:translateX(-50%) rotate(-1.5deg);
+  font-family:'Mountains of Christmas',cursive;font-weight:700;font-size:1.65rem;
+  color:rgba(247,245,239,.88);text-shadow:0 1px 3px rgba(0,0,0,.6);z-index:2;
+  white-space:nowrap;
+}
+.tracker .sleigh-rig{
+  position:absolute;top:28%;left:5%;--tilt:0deg;
+  transition:left 1.3s cubic-bezier(.4,0,.2,1), top 1.3s cubic-bezier(.4,0,.2,1);
+  animation:bob 2.6s ease-in-out infinite;
+  z-index:2;
+}
+@keyframes bob{0%,100%{transform:translateY(0) }50%{transform:translateY(-6px) }}
+.tracker .sleigh-rig img{
+  display:block;width:230px;height:auto;filter:drop-shadow(0 10px 14px rgba(0,0,0,.5));
+  /* The reindeer already face right (snouts point away from the sleigh) in this
+     asset's native orientation, unlike the previous sleigh graphic — no
+     horizontal flip needed to face the direction the timeline travels. */
+  transform:rotate(var(--tilt));
+  transition:transform 1.3s cubic-bezier(.4,0,.2,1);
+}
+/* Wraps the curve, the sleigh AND the countdown text together so all three
+   appear with one left-to-right wipe the moment the intro dismisses, rather
+   than the curve being drawn on its own with the sleigh and badge just sitting
+   there already visible. clip-path's inset() grows the visible region from the
+   left edge rightward as the right-inset shrinks from 100% (nothing shown) to
+   0% (full width) — the top/bottom insets are negative, not 0, so the wipe's
+   own edge doesn't clip the curve's peak, which draws above this box (see
+   .trail-svg's overflow:visible, needed there for the same reason).
+   JS toggles .revealed at the same moment the intro overlay starts fading out;
+   prefers-reduced-motion already forces every transition on the page
+   near-instant, this one included. */
+.trail-reveal{
+  position:absolute;inset:0;
+  clip-path:inset(-30% 100% -10% 0);
+  transition:clip-path 1.8s cubic-bezier(.3,.6,.2,1);
+}
+.trail-reveal.revealed{clip-path:inset(-30% 0 -10% 0);}
+.trail-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;}
+.trail-bg{fill:none;stroke:rgba(255,255,255,.22);stroke-width:.55;stroke-linecap:round;stroke-dasharray:.4 2.4;}
+.trail-fill{
+  fill:none;stroke:var(--candle);stroke-width:.8;stroke-linecap:round;
+  filter:drop-shadow(0 0 4px rgba(231,165,87,.85));
+  stroke-dasharray:100;stroke-dashoffset:100;
+  transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1);
+}
+/* The countdown is text set along invisible paths that follow the same curve
+   as the sleigh's trail (built in JS by fitBadgeToCurve). This svg's viewBox is
+   kept at 1:1 pixels (renderTracker) so the letters are never stretched. */
+.badge-curve-svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;overflow:visible;pointer-events:none;
+  /* The countdown's shadow. It sits on
+     the whole <svg> because iOS Safari ignores both text-shadow and CSS filters
+     on individual SVG <text> elements, but honours a filter on the <svg> box. */
+  -webkit-filter:drop-shadow(0 1px 2px rgba(13,24,48,.75)) drop-shadow(0 2px 6px rgba(13,24,48,.45));
+  filter:drop-shadow(0 1px 2px rgba(13,24,48,.75)) drop-shadow(0 2px 6px rgba(13,24,48,.45));}
+.badge-curve-text{
+  font-family:'Mountains of Christmas',cursive;font-weight:700;
+  fill:#fff;
+}
+.badge-curve-text .badge-num{fill:var(--brand-gold-deep);}
+/* The gold numbers are drawn on a second, shadow-free layer laid exactly over
+   the first, so the words keep their shadow and the numbers stay crisp. In the
+   shadowed layer the numbers are invisible (and so cast no shadow); in the top
+   layer the words are invisible. */
+.badge-curve-svg:not(.badge-num-svg) .badge-num{fill-opacity:0;}
+.badge-num-svg{z-index:3;-webkit-filter:none;filter:none;}
+.badge-num-svg .badge-curve-text{fill-opacity:0;}
+.badge-num-svg .badge-num{fill-opacity:1;}
+
+/* ---------- fullscreen video transition slides ---------- */
+/* Shared by both new transition slides (village flythrough -> elves, cozy
+   fireside -> Santa's workshop): a plain full-bleed looping video with a light
+   vignette for the scroll-hint button's contrast, no other content. */
+.fullscreen-video-slide{
+  position:relative;width:100%;height:100vh;z-index:3;overflow:hidden;
+  background-color:var(--night-1);
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.fullscreen-video-slide video{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;z-index:0;
+}
+.fullscreen-video-slide::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  /* Both edges used to only dim to ~30% rather than reach solid var(--night-1) —
+     a visible brightness jump right where this slide meets .roster-section above
+     (which fades all the way to solid by its own bottom edge) and .stage-section
+     below (which starts solid at its own top edge). Matching that solid color at
+     both 0% and 100% here closes both seams. */
+  background:linear-gradient(180deg, rgba(11,23,51,.05) 0%, rgba(11,23,51,.05) 78%, rgba(11,23,51,.12) 100%);
+}
+/* The down-chevron "continue" button on every full-screen slide but the last
+   (Santa's workshop, which is normal scrolling, needs none): scroll-snap
+   handles wheel/touch, this covers the "or on click" half of the brief, and
+   its gentle bob doubles as a hint that there's more below for anyone who
+   doesn't already know the scroll-snap pattern. */
+.scroll-next-btn{
+  position:absolute;left:50%;bottom:calc(var(--seam) + 12px);transform:translateX(-50%);
+  z-index:4;width:48px;height:48px;border-radius:50%;
+  background:rgba(13,24,48,.45);border:1px solid rgba(227,176,75,.45);
+  color:var(--brand-snow);display:flex;align-items:center;justify-content:center;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background .2s, border-color .2s;
+  animation:scrollHintBob 1.8s ease-in-out infinite;
+}
+.scroll-next-btn:hover{background:rgba(13,24,48,.72);border-color:var(--brand-gold);}
+/* Seams between slides: instead of every section fading to the same solid
+   navy at its edges (which read as a dark separator band), each section
+   after the first slides up by --seam over the bottom of the one above and
+   fades in from transparent across that band. The upper section's own last
+   colors show through and dissolve directly into the lower section's first
+   colors, so the two real images cross-fade. Later sections stack above
+   earlier ones (z-index 1-4) for this. They let clicks through except on
+   their own controls, so the overlapped band of the section above stays
+   usable; the chevrons sit above the band. */
+.roster-section, #workshopTransition, .stage-section{
+  margin-top:calc(-1 * var(--seam));
+  -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 var(--seam));
+  mask-image:linear-gradient(180deg, transparent 0, #000 var(--seam));
+  pointer-events:none;
+}
+/* An elf whose name has already been played (see "names already played"). */
+.elf-chip.elf-chip-played{opacity:.5;cursor:default;pointer-events:none;text-decoration:line-through;}
+.roster-section .to-santa-btn, #workshopTransition .scroll-next-btn, .stage-section .name-form, .stage-section .reveal-card{pointer-events:auto;}
+@keyframes scrollHintBob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(8px);}}
+
+/* ---------- hero ---------- */
+/* Lives directly on top of the cozy-fireside video now, inside
+   .workshopTransition, rather than as its own section after it — an absolute
+   overlay centered over the video instead of a normally-flowed block. The
+   video's own ::before vignette (see .fullscreen-video-slide) plus the text
+   shadows here keep it readable against the video's brighter highlights. */
+.hero{
+  position:absolute;inset:0;z-index:2;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;
+}
+.hero .kicker{
+  display:inline-block;font-family:'Mountains of Christmas',cursive;font-weight:600;font-size:1.5rem;
+  color:var(--candle);transform:rotate(-2deg);margin-bottom:8px;
+  text-shadow:0 2px 10px rgba(0,0,0,.6);
+}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);margin:0 0 14px;font-weight:800;
+  background:linear-gradient(180deg,#fff,var(--snow-dim));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 12px rgba(0,0,0,.65));
+}
+.hero p.lede{max-width:560px;margin:0 auto;color:rgba(247,245,239,.92);font-size:1.08rem;text-shadow:0 2px 8px rgba(0,0,0,.7);}
+
+/* ---------- stage: Santa's workshop diorama ---------- */
+/* scroll-snap-align (no -stop): now that the hero text moved onto the video
+   slide before it, this is the next valid landing point after that slide —
+   without one, mandatory snap (html{scroll-snap-type}) pulls the scroll back
+   to .workshopTransition instead of letting it reach here (same issue the
+   hero section itself used to solve before its content moved). */
+.stage-section{
+  position:relative;z-index:4;overflow:hidden;min-height:1180px;
+  scroll-snap-align:start;
+  background-color:var(--night-1);
+}
+/* Replaced the old static background-image with a looping video (see
+   #stageVideoBg) — object-position alone can't tell JS where the video's own
+   content (the sheet of paper the name is written on, see .name-reveal-text)
+   actually lands once object-fit:cover crops it, so this is positioned/sized
+   by JS (getStageVideoRect) using the same posX/posY the CSS values below
+   describe, rather than pure CSS object-fit. */
+.stage-video-bg{
+  position:absolute;inset:0;width:100%;height:100%;z-index:0;
+  object-fit:cover;object-position:center 40%;
+}
+.stage-section::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:linear-gradient(180deg, rgba(11,23,51,.2) 0%, rgba(11,23,51,.08) 30%, rgba(11,23,51,.1) 68%, rgba(11,23,51,.6) 88%, var(--night-1) 100%);
+}
+/* The person's match, written on the blank sheet Santa lays on his desk at
+   the end of the clip: a fixed NAME_BOX_W x NAME_BOX_H box mapped onto the
+   tracked sheet by a JS matrix3d (see positionNameReveal), so it lies
+   landscape along the paper between his hands with the paper's own
+   perspective. multiply lets the paper's grain and lighting show through the
+   ink. Above .stage-inner (z-index 2), which reveal-dim fades back while the
+   name shows. */
+.name-reveal-text{
+  position:absolute;left:0;top:0;width:500px;height:160px;z-index:3;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:'Mountains of Christmas',cursive;font-weight:700;line-height:1;
+  color:#20140c;white-space:nowrap;mix-blend-mode:multiply;
+  opacity:0;transition:opacity .9s ease;transform-origin:0 0;
+}
+.name-reveal-text.show{opacity:.92;}
+/* Backup reveal, shown only if Santa's desk video can't get to the paper
+   (see the reveal watchdog). */
+.reveal-card{
+  position:absolute;left:50%;top:50%;z-index:6;width:min(86%,360px);
+  transform:translate(-50%,-50%);padding:22px 20px 18px;border-radius:18px;
+  background:var(--snow);color:var(--ink);text-align:center;
+  box-shadow:0 24px 50px -16px rgba(0,0,0,.6);
+  animation:revealCardIn .5s ease both;
+}
+.reveal-card[hidden]{display:none;}
+@keyframes revealCardIn{from{opacity:0;transform:translate(-50%,-46%);}to{opacity:1;transform:translate(-50%,-50%);}}
+.reveal-card-label{font-size:.8rem;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-soft);}
+.reveal-card-name{font-family:'Mountains of Christmas',cursive;font-weight:700;font-size:2.6rem;line-height:1.1;color:var(--berry-dark);margin:8px 0 4px;overflow-wrap:anywhere;}
+.reveal-card-foot{font-size:.92rem;color:var(--ink-soft);}
+.reveal-card-retry, .modal .btn.secondary{
+  background:transparent;color:var(--brand-royal);border:1.5px solid rgba(28,47,116,.4);
+  border-radius:999px;font-weight:700;box-shadow:none;cursor:pointer;transition:background .2s, border-color .2s;
+}
+.reveal-card-retry:hover, .modal .btn.secondary:hover{background:rgba(28,47,116,.07);border-color:var(--brand-royal);}
+.reveal-card-retry{margin-top:16px;padding:9px 18px;font-size:.88rem;}
+.stage-inner{
+  position:relative;z-index:2;max-width:1080px;margin:0 auto;
+  padding:calc(var(--seam) + 28px) 32px 60px;display:flex;flex-direction:column;align-items:center;
+  transition:opacity .6s ease;
+}
+/* .3, not lower: the name-form (select + submit button) lives inside
+   .stage-inner too, and stays fully clickable the whole time (no
+   pointer-events change) — dim enough that the video and the name read as
+   the focus, not so dim someone mid-click loses track of the button. */
+.stage-inner.reveal-dim{opacity:.3;}
+
+/* First item of the stage column; .stage-inner's padding sets the space above it. */
+.speech-bubble{
+  position:relative;background:var(--snow);color:var(--ink);border-radius:18px;
+  padding:14px 20px;max-width:340px;font-weight:700;font-size:1.02rem;text-align:center;
+  margin-top:0;box-shadow:0 10px 24px rgba(0,0,0,.25);min-height:1.4em;
+}
+.speech-bubble::after{
+  content:"";position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  border-width:0 10px 10px 10px;border-style:solid;border-color:transparent transparent var(--snow) transparent;
+}
+
+.name-form{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;justify-content:center;width:100%;max-width:420px;
+  transition:opacity .5s ease, transform .5s ease, visibility 0s linear 0s;}
+/* Once a name has been told to Santa the selector and his speech bubble have
+   done their job; both fade out (and stop taking taps) so nothing sits over
+   the video and the paper. */
+.speech-bubble{transition:opacity .5s ease, transform .5s ease, visibility 0s linear 0s;}
+.name-form.gone, .speech-bubble.gone{opacity:0;transform:translateY(-8px);visibility:hidden;pointer-events:none;
+  transition:opacity .5s ease, transform .5s ease, visibility 0s linear .5s;}
+.name-form select{
+  flex:1;min-width:180px;border:none;border-radius:999px;padding:13px 44px 13px 20px;font-size:1rem;
+  background:var(--snow) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%231b2436" d="M7 10l5 5 5-5z"/></svg>') no-repeat right 14px center / 18px;
+  color:var(--ink);font-weight:700;appearance:none;-webkit-appearance:none;cursor:pointer;
+}
+.name-form select:invalid{color:var(--ink-soft);}
+.btn{padding:13px 24px;font-size:.98rem;}
+.btn:hover{transform:translateY(-2px);}
+.btn.gold{background:var(--brand-gold);color:var(--brand-ink);box-shadow:0 10px 22px -10px rgba(227,176,75,.9);}
+.btn.gold:hover{background:var(--brand-gold-light);}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+
+.flash-note{margin-top:14px;font-size:.88rem;color:rgba(247,245,239,.75);min-height:1.2em;text-align:center;}
+.flash-note.error{color:#ffb3b3;}
+
+
+/* ---------- roster ---------- */
+/* A full-screen slide on desktop; phones size it to the video (see the phone block). */
+.roster-section{
+  position:relative;z-index:2;overflow:hidden;min-height:100vh;
+  background-color:var(--night-1);
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.roster-video-bg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 48%;z-index:0;
+}
+.roster-section::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+  /* Darkening used to start climbing back up from 38% down to the bottom edge,
+     which fell right across the dancing elves' legs and feet — reading as the
+     bottom of the video being cut off rather than a seam blend. It only needs a
+     short fade right at the very edge, down to the exact same solid var(--night-1)
+     .tracker fades DOWN to above this section and .fullscreen-video-slide fades
+     UP to below it — matching solid color on both sides of every seam is what
+     keeps the whole scroll feeling like one continuous screen rather than a
+     stack of separate ones; the rest of the frame stays clear. */
+  background:linear-gradient(180deg, rgba(11,23,51,.08) 0%, rgba(11,23,51,.08) 80%, rgba(11,23,51,.12) 100%);
+}
+.panel{
+  position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:70px 32px;
+}
+.panel h2{
+  position:absolute;left:50%;top:72px;transform:translateX(-50%);margin:0;
+  font-family:'Glass Antiqua',serif;font-weight:400;font-size:clamp(1.9rem,4vw,2.7rem);
+  text-align:center;white-space:nowrap;text-shadow:0 4px 18px rgba(0,0,0,.5);
+}
+.lw-text{position:relative;z-index:1;}
+/* "Les lutins de cette année" in the brand gold, with the same soft shadow as
+   the other section titles. */
+#rosterHeading .lw-text{color:#fff;
+  text-shadow:0 2px 8px rgba(13,24,48,.55), 0 4px 20px rgba(0,0,0,.6);}.light-weave-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:2;}
+.light-weave-svg .lw-wire{fill:none;stroke:#283055;stroke-width:1.1;stroke-dasharray:2 3;opacity:.55;}
+.light-weave-svg .lw-bulb-glow{filter:blur(1.6px);opacity:.55;}
+.light-weave-svg .lw-bulb{filter:drop-shadow(0 0 1.8px rgba(255,255,255,.8));animation:twinkle 1.6s ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.45}}
+.chip-row{position:absolute;inset:0;z-index:2;pointer-events:none;}
+.elf-chip{
+  position:absolute;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;appearance:none;
+  display:flex;align-items:center;background:rgba(13,24,48,.6);color:var(--brand-snow);
+  border:1px solid rgba(227,176,75,.5);border-radius:999px;padding:5px 14px;
+  font-family:'Mountains of Christmas',cursive;font-weight:700;font-size:1.2rem;
+  backdrop-filter:blur(2px);transition:transform .15s,background .2s;white-space:nowrap;
+}
+.elf-chip:hover,.elf-chip:focus-visible{background:rgba(13,24,48,.85);border-color:var(--brand-gold);transform:translate(-50%,-50%) scale(1.08);}
+/* This size only actually governs desktop: the mobile media query below sets
+   .elf-chip's own font-size/padding later in the cascade, which (same
+   specificity, later rule) wins back over this on any narrower viewport. */
+.elf-chip-decorative{cursor:default;pointer-events:none;font-size:.85rem;padding:4px 10px;}
+.empty-roster{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;
+  color:rgba(247,245,239,.75);font-size:1rem;font-style:italic;text-align:center;
+}
+
+/* ---------- footer ---------- */
+footer{position:relative;z-index:2;text-align:center;padding:30px 24px 50px;color:rgba(247,245,239,.5);font-size:.82rem;}
+
+/* ---------- workshop modal ---------- */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(5,10,24,.72);z-index:50;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-backdrop.open{opacity:1;pointer-events:auto;}
+.modal{
+  background:var(--snow);color:var(--ink);border-radius:var(--radius-lg);
+  width:100%;max-width:640px;max-height:86vh;overflow-y:auto;padding:30px 32px 32px;
+  box-shadow:0 40px 80px -20px rgba(0,0,0,.55);
+  transform:translateY(16px) scale(.98);transition:transform .25s;
+}
+.modal-backdrop.open .modal{transform:translateY(0) scale(1);}
+.modal h2{margin:0 0 4px;font-family:'Yeseva One',serif;font-weight:500;color:var(--ink);}
+.modal .sub{color:var(--ink-soft);margin:0 0 20px;font-size:.92rem;}
+.modal label{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);display:block;margin-bottom:6px;}
+.modal input[type=text],.modal input[type=password],.modal select{
+  width:100%;border:2px solid var(--snow-dim);border-radius:var(--radius-sm);padding:10px 14px;
+  font-size:.98rem;background:#fff;color:var(--ink);font-weight:600;
+}
+.modal input:focus,.modal select:focus{border-color:var(--berry);outline:none;}
+.row-flex{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;}
+.row-flex > div{flex:1;min-width:140px;}
+.modal .btn{padding:11px 20px;font-size:.9rem;}
+.modal-close{position:absolute;top:18px;right:20px;background:none;border:none;font-size:1.3rem;color:var(--ink-soft);}
+.section-divider{border:none;border-top:2px dashed var(--snow-dim);margin:22px 0;}
+.roster-list,.exclusion-list{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0;}
+.pill{
+  display:flex;align-items:center;gap:6px;background:var(--snow-dim);border-radius:999px;
+  padding:6px 8px 6px 12px;font-weight:700;font-size:.86rem;
+}
+.pill button{background:none;border:none;color:var(--berry-dark);font-weight:800;font-size:1rem;line-height:1;padding:2px 4px;}
+.draw-banner{background:#fff6e8;border:1px solid var(--candle);border-radius:var(--radius-md);padding:14px 18px;font-size:.9rem;margin-bottom:16px;color:#7a5323;}
+.result-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--snow-dim);padding:10px 0;}
+.result-row:last-child{border-bottom:none;}
+.result-row .who{font-weight:800;}
+.copy-small{background:var(--brand-fir);color:var(--brand-snow);border:none;border-radius:999px;padding:7px 14px;font-weight:700;font-size:.82rem;cursor:pointer;}
+.copy-small:hover{background:var(--pine-light);}
+textarea.bulk{width:100%;min-height:120px;border:2px solid var(--snow-dim);border-radius:var(--radius-sm);padding:12px;font-family:ui-monospace,monospace;font-size:.82rem;margin-top:10px;}
+
+/* ---------- intro: loading -> enter ---------- */
+.intro-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:radial-gradient(ellipse at 50% 15%, var(--night-2), var(--night-1) 75%);
+  transition:opacity .65s ease;
+}
+.intro-overlay.hide{opacity:0;pointer-events:none;}
+.intro-card{
+  position:absolute;inset:0;overflow:hidden;
+  background:#151210;
+}
+.intro-stage{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;}
+.intro-loading{
+  justify-content:center;padding:56px 20px;text-align:center;
+  background:radial-gradient(ellipse at 50% 28%, #241f1a 0%, #151210 72%);
+  color:rgba(247,245,239,.8);
+  z-index:2;
+}
+.intro-mark{opacity:.65;margin-top:6px;}
+.intro-mark svg{width:60px;height:60px;}
+.intro-caption{font-family:'Mountains of Christmas';font-size:1.35rem;color:rgba(247,245,239,.6);margin-top:14px;}
+.intro-loading-title{font-family:'Yeseva One',serif;font-weight:500;font-size:1.7rem;color:rgba(247,245,239,.88);margin-top:0;}
+.intro-percent{
+  font-family:'Yeseva One',serif;font-weight:400;font-style:italic;font-size:clamp(3.2rem,9vw,5.2rem);
+  color:transparent;-webkit-text-stroke:1.5px rgba(247,245,239,.85);letter-spacing:1px;
+  margin-top:14px;
+}
+/* iOS draws its own big play button over any video it hasn't been allowed to
+   start yet (Low Power Mode); these are background scenery, never controls. */
+video::-webkit-media-controls-start-playback-button{display:none !important;-webkit-appearance:none;}
+video::-webkit-media-controls{display:none !important;}
+.intro-enter{
+  justify-content:center;text-align:center;padding:10vh 6vw;opacity:0;pointer-events:none;
+  transition:opacity .9s ease;z-index:1;
+  background:#87aaf2;
+}
+/* Rendered (not display:none) from page load so the video behind it can start
+   buffering immediately instead of only once the loading screen finishes — only
+   its opacity and click-ability toggle once the "Entrer" screen is ready. */
+.intro-enter.show{opacity:1;pointer-events:auto;}
+.intro-enter-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%;z-index:0;}
+.intro-enter::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg, rgba(11,23,51,.25) 0%, rgba(11,23,51,.15) 45%, rgba(11,23,51,.78) 100%);}
+.intro-enter-content{position:relative;z-index:2;transform:translateY(3.5vh);}
+.intro-headline{
+  font-family:'Mountains of Christmas',cursive;font-weight:700;font-size:clamp(2.3rem,6vw,3.6rem);
+  color:#fff;text-shadow:0 4px 18px rgba(0,0,0,.5);line-height:1.15;margin:0;
+}
+/* The family name: white like the rest, on its own line and larger. */
+.intro-headline em{display:block;font-style:normal;font-weight:700;color:#fff;
+  font-size:1.32em;letter-spacing:.01em;line-height:1.1;margin-top:.08em;}
+.intro-enter-btn{margin-top:30px;padding:14px 36px;font-size:.98rem;}
+.intro-enter-btn:hover{transform:translateY(-2px);}
+
+/* ---------- two pages ----------
+   Page 1 is the journey and the elves; "Allez voir le Père Noël !" switches to
+   page 2 (address #pere-noel): Santa at the window, then the name selection.
+   On page 2 the window scene is first, so it starts plainly instead of
+   blending out of the elves. */
+body:not(.page-santa) #workshopTransition, body:not(.page-santa) #stageSection{display:none;}
+body.page-santa .tracker, body.page-santa #rosterSection{display:none;}
+body.page-santa #workshopTransition{margin-top:0;-webkit-mask-image:none;mask-image:none;}
+body.page-santa .back-link{display:inline-flex;}
+.to-santa-btn{
+  position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:4;
+  white-space:nowrap;padding:15px 30px;font-size:1.05rem;
+}
+.to-santa-btn:hover{transform:translateX(-50%) translateY(-2px);}
+
+/* ---------- phones ---------- */
+@media (max-width:640px){
+  /* Sections are only as tall as their content here, so snapping relaxes. */
+  html{scroll-snap-type:y proximity;}
+
+  .intro-loading{padding:40px 16px;}
+  .intro-headline{font-size:1.5rem;}
+
+  /* Tracker: smaller sleigh; the title and the whole curve group sit below
+     the header button, with room for stacked countdown lines. */
+  .tracker .sleigh-rig img{width:140px;}
+  #trailReveal{transform:translateY(80px);}
+  .tracker .eyebrow{top:58px;font-size:1.5rem;}
+
+  /* Elves: the clip as a full-width 16:9 band (nothing cropped) between a sky
+     strip (--seam) and a strip going from its snow to grey to night, which
+     holds the "Allez voir le Père Noël !" button. The clip's own top and bottom
+     never change, so the strips match them exactly. getVideoRectInContainer
+     reads this layout to place the heading and name chips. */
+  .roster-section{min-height:0;height:calc(56.25vw + var(--seam) + 112px);
+    background:linear-gradient(180deg, #89a9ed 0, #89a9ed calc(var(--seam) + 28vw), #d6dcda calc(var(--seam) + 28vw), #d6dcda calc(var(--seam) + 56.25vw), #59606b calc(var(--seam) + 56.25vw + 48px), var(--night-1) 100%);}
+  .to-santa-btn{bottom:22px;padding:13px 26px;font-size:1rem;}
+  .roster-video-bg{top:var(--seam);bottom:auto;height:56.25vw;object-fit:cover;
+    -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+    mask-image:linear-gradient(180deg, transparent 0, #000 7%, #000 93%, transparent 100%);}
+  .panel{padding:50px 20px;}
+  .panel h2{top:70px;font-size:1.6rem;white-space:normal;width:90%;}
+  .elf-chip{font-size:.7rem;padding:3px 7px;}
+  .empty-roster{width:85%;}
+
+  /* Fireside: title, then the clip, then the paragraph, on a near-black that
+     matches the top of Santa's desk. Its edges change over the clip (night
+     outside, then warm inside), so instead of colour strips it fades in over
+     the bottom of the page above and feathers into that dark. .hero is
+     display:contents so its title and paragraph can sit either side of the
+     video, which is .hero's sibling in the markup. */
+  #workshopTransition{height:auto;background:#120c0d;display:flex;flex-direction:column;
+    margin-top:-48px;padding:48px 0 calc(var(--seam) + 16px);
+    -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 48px);
+    mask-image:linear-gradient(180deg, transparent 0, #000 48px);}
+  #workshopTransition video{order:2;position:relative;inset:auto;top:auto;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;
+    -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 16%, #000 80%, transparent 100%);
+    mask-image:linear-gradient(180deg, transparent 0, #000 16%, #000 80%, transparent 100%);}
+  #workshopTransition .hero{display:contents;}
+  #workshopTransition .hero-title{order:1;position:relative;z-index:2;text-align:center;padding:6px 4.5vw 10px;font-size:4.5vw;}
+  #workshopTransition .hero .kicker{font-size:1.05em;margin-bottom:.1em;}
+  #workshopTransition .hero h1{font-size:1.75em;margin:0;line-height:1.05;}
+  #workshopTransition .hero p.lede{order:3;position:relative;z-index:2;text-align:center;font-size:.98rem;line-height:1.5;max-width:none;margin:14px 0 0;padding:0 22px;}
+  #workshopTransition .scroll-next-btn{display:none;}
+  body.page-santa #workshopTransition{padding-top:76px;}
+
+  /* Santa's desk */
+  .stage-section{min-height:820px;}
+  .stage-inner{padding:calc(var(--seam) + 16px) 18px 48px;}
+}
+/* Narrowest phones (~320px): a touch smaller still, so every name clears its
+   neighbours. */
+@media (max-width:360px){
+  .panel h2{font-size:1.4rem;}
+  .elf-chip{font-size:.68rem;padding:3px 7px;}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+}
+</style>
+
+<div id="snowfield"></div>
+
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-card">
+    <div class="intro-stage intro-loading" id="introLoading">
+      <div></div>
+      <div>
+        <div class="intro-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 46 L14 58"/>
+            <path d="M6 46 L14 32 L22 46 Z"/>
+            <path d="M8 36 L14 24 L20 36 Z"/>
+            <path d="M28 58 L28 40 L44 30 L60 40 L60 58 Z"/>
+            <path d="M28 40 L60 40"/>
+            <path d="M38 58 L38 48 L50 48 L50 58"/>
+            <circle cx="44" cy="34" r="2.6"/>
+          </svg>
+        </div>
+        <div class="intro-caption">On prépare</div>
+        <div class="intro-loading-title">un monde de Noël</div>
+      </div>
+      <div class="intro-percent" id="introPercent">0%</div>
+    </div>
+    <div class="intro-stage intro-enter" id="introEnter">
+      <video class="intro-enter-video" autoplay loop muted playsinline preload="auto" aria-hidden="true">
+        <source src="assets/intro.mp4" type="video/mp4">
+      </video>
+      <div class="intro-enter-content">
+        <p class="intro-headline">Entre dans le monde de Noël<br>des familles<em>Breuil&#8209;Wenckowski</em></p>
+        <button type="button" class="intro-enter-btn" id="introEnterBtn">Entrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header class="site">
+  <a id="backToElves" class="back-link" href="./">‹ Les lutins</a>
+</header>
+
+<section class="tracker" aria-label="Le voyage du Père Noël depuis le dernier Noël">
+  <video class="tracker-video-bg" autoplay loop muted playsinline preload="auto" aria-hidden="true">
+    <source src="assets/tracker.mp4" type="video/mp4">
+  </video>
+  <div class="eyebrow">Le grand voyage du Père Noël</div>
+  <div class="trail-reveal" id="trailReveal">
+    <svg class="trail-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path class="trail-bg" d="M 5 40 Q 49 -18 93 40" pathLength="100"></path>
+      <path class="trail-fill" id="trailFill" d="M 5 40 Q 49 -18 93 40" pathLength="100"></path>
+    </svg>
+    <div class="sleigh-rig" id="sleighRig" style="left:5%">
+      <img src="assets/sleigh.png" alt="">
+    </div>
+    <svg class="badge-curve-svg" id="badgeCurveSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    </svg>
+    <svg class="badge-curve-svg badge-num-svg" id="badgeNumSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    </svg>
+  </div>
+  <p class="visually-hidden" id="trackerBadgeSr"></p>
+  <button class="scroll-next-btn" type="button" data-scroll-target="#rosterSection" aria-label="Continuer">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+</section>
+
+<main>
+  <section class="roster-section" id="rosterSection">
+    <video class="roster-video-bg" id="rosterVideoA" autoplay loop muted playsinline preload="auto" aria-hidden="true">
+      <source src="assets/elves-loop.mp4" type="video/mp4">
+    </video>
+    <div class="chip-row" id="rosterChips"></div>
+    <div class="panel">
+      <h2 id="rosterHeading">
+        <span class="lw-text" id="rosterHeadingText">Les lutins de cette année</span>
+        <svg class="light-weave-svg" id="lightWeaveSvg" aria-hidden="true"></svg>
+      </h2>
+    </div>
+    <a class="to-santa-btn" id="toSantaBtn" href="#pere-noel">Allez voir le Père Noël !</a>
+  </section>
+
+  <section class="fullscreen-video-slide" id="workshopTransition" aria-label="En route vers l'atelier du Père Noël">
+    <video autoplay loop muted playsinline preload="auto" aria-hidden="true">
+      <source src="assets/workshop.mp4" type="video/mp4">
+    </video>
+    <div class="hero wrap">
+      <div class="hero-title">
+        <div class="kicker">La saison des cadeaux vient de commencer</div>
+        <h1>Le Père Noël a besoin de toi !</h1>
+      </div>
+      <p class="lede">Choisis ton prénom dans la liste ci-dessous : le Père Noël te révélera la personne à qui tu dois offrir un cadeau cette année. Chut, personne ne peut savoir qui sera l'heureux destinataire de ta surprise !</p>
+    </div>
+    <button class="scroll-next-btn" type="button" data-scroll-target="#stageSection" aria-label="Continuer">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+  </section>
+
+  <section class="stage-section" id="stageSection">
+      <video class="stage-video-bg" id="stageVideoBg" autoplay muted playsinline preload="auto" aria-hidden="true">
+        <source src="assets/stage-santa.mp4" type="video/mp4">
+      </video>
+      <div class="name-reveal-text" id="nameRevealText" aria-hidden="true"></div>
+      <div class="reveal-card" id="revealCard" role="status" aria-live="polite" hidden>
+        <div class="reveal-card-label">Ton tirage secret</div>
+        <div class="reveal-card-name" id="revealCardName"></div>
+        <div class="reveal-card-foot">Motus et bouche cousue !</div>
+        <button type="button" class="reveal-card-retry" id="revealRetry">Revoir la vidéo</button>
+      </div>
+      <div class="stage-inner" id="stageInner">
+        <div class="speech-bubble" id="speechBubble">Ho ho ho ! Quel est ton prénom ?</div>
+
+        <form class="name-form" id="nameForm" autocomplete="off">
+          <select id="nameSelect" required aria-label="Choisis ton prénom">
+            <option value="" disabled selected>Quel lutin es-tu ?</option>
+          </select>
+          <button type="submit" class="btn">Le dire au Père Noël</button>
+        </form>
+        <div class="flash-note" id="flashNote"></div>
+
+      </div>
+  </section>
+</main>
+
+<footer>
+  Un petit projet familial pour le plaisir : les résultats sont légèrement brouillés, pas blindés comme un coffre-fort, alors merci de ne jamais aller regarder le nom de quelqu'un d'autre.<br>
+  Fait avec soin pour les Breuil-Wenckowski.
+</footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Fermer">✕</button>
+    <div id="gateView">
+      <h2 id="modalTitle">Espace organisateur</h2>
+      <p class="sub">C'est l'arrière-boutique du Père Noël : entre le mot de passe de l'atelier pour gérer la liste familiale et lancer le tirage.</p>
+      <label for="passInput">Mot de passe</label>
+      <input type="password" id="passInput" placeholder="Indice : trois « ho »…">
+      <div style="margin-top:16px;display:flex;gap:10px;">
+        <button class="btn gold" id="passSubmit">Déverrouiller l'atelier</button>
+        <button class="btn secondary" id="gateCancel">Annuler</button>
+      </div>
+      <p class="flash-note error" id="gateError"></p>
+    </div>
+
+    <div id="workshopView" style="display:none;">
+      <h2>Espace organisateur</h2>
+      <p class="sub">Le tirage est publié pour toute la famille dès que tu cliques sur « Tirer au sort ! » : personne d'autre n'a besoin d'un compte pour voir son résultat.</p>
+
+      <div id="preDrawView">
+        <label for="rosterNameInput">Ajouter un membre de la famille</label>
+        <div class="row-flex">
+          <div><input type="text" id="rosterNameInput" placeholder="ex. Alicia" maxlength="40"></div>
+          <button class="btn" id="rosterAddBtn" type="button">Ajouter à la liste</button>
+        </div>
+        <div class="roster-list" id="rosterEditList"></div>
+
+        <hr class="section-divider">
+
+        <label>Empêcher deux personnes de se tirer mutuellement (facultatif, ex. un couple)</label>
+        <p class="sub" style="margin-top:-8px;margin-bottom:12px;">Personne ne peut jamais se tirer soi-même : c'est garanti automatiquement, pas besoin de l'ajouter ici.</p>
+        <div class="row-flex">
+          <div><select id="exclA" aria-label="Première personne de la paire"></select></div>
+          <div><select id="exclB" aria-label="Deuxième personne de la paire"></select></div>
+          <button class="btn secondary" id="exclAddBtn" type="button">Ajouter une exclusion</button>
+        </div>
+        <div class="exclusion-list" id="exclusionList"></div>
+
+        <hr class="section-divider">
+        <button class="btn gold" id="drawBtn" type="button" style="width:100%;font-size:1.05rem;padding:15px;">Ho ho ho ! Tirer au sort !</button>
+        <p class="flash-note" id="drawNote"></p>
+      </div>
+
+      <div id="postDrawView" style="display:none;">
+        <div class="draw-banner">Le tirage est fait ! Envoie à chaque personne <em>uniquement son propre</em> lien ci-dessous, jamais la liste complète.</div>
+        <p class="flash-note" id="publishStatus" style="margin-top:-8px;"></p>
+        <div id="resultsList"></div>
+        <label style="margin-top:16px;">Tout copier d'un coup (colle dans ta messagerie, puis répartis les liens)</label>
+        <textarea class="bulk" id="bulkResults" readonly></textarea>
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn secondary" id="copyAllBtn" type="button">Copier toutes les lignes</button>
+          <button class="btn secondary" id="redrawBtn" type="button">Effacer et recommencer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="seedData">{"names":["Alex","Marie","Christelle","Jocelyne","Ben","Alicia","Patrice B","Patrice W","Tommy"],"exclusions":[["Alex","Marie"],["Jocelyne","Patrice W"],["Christelle","Patrice B"]],"drawn":true,"assignments":{"marie":{"name":"Marie","payload":"KEMAVlt1IhMZGg1NXA8vUF9XKwlDdRg"},"jocelyne":{"name":"Jocelyne","payload":"KEMAVlt1JR0IFgQWHkhgXkcYS1YPFA0cChgbEh8HDA9P"},"christelle":{"name":"Christelle","payload":"KEMAVlt1LBoZGhsbFUEuF0dZSwEPbUc-Ah8dHhAOSXoQTQ"},"alicia":{"name":"Alicia","payload":"KEMAVlt1Lh4CEAEOUgFgH0dPSy1BMh1MHg"},"patrice-b":{"name":"Patrice B","payload":"KEMAVlt1PxMfAQEMFQ0AUElXBE4XdSgPEQIKVQ4"},"ben":{"name":"Ben","payload":"KEMAVlt1LRcFUURNHQ94UC8aCglBLgsLQRY"},"alex":{"name":"Alex","payload":"KEMAVlt1Lh4OC0pDUkBgSEchBgFALkcT"},"patrice-w":{"name":"Patrice W","payload":"KEMAVlt1PxMfAQEMFQ0VUElXBE4XdTUPFxkGFBZLKw9P"},"tommy":{"name":"Tommy","payload":"KEMAVlt1Ox0GHhFNXA8vUF9XKABENAwPQRY"}}}</script>
+
+<script>
+(function(){
+"use strict";
+
+var FAMILY_NAME = "Breuil-Wenckowski";
+var WORKSHOP_PASSPHRASE = "hohoho";
+var SALT = "SantaWorkshop-" + FAMILY_NAME + "-2026";
+
+/* ---------------- date / tracker: full year, last Christmas -> next Christmas ---------------- */
+function christmas(y){ return new Date(y,11,25,0,0,0); }
+function computeSeason(){
+  var now = new Date();
+  var y = now.getFullYear();
+  var thisXmas = christmas(y);
+  var isXmasDay = now >= thisXmas && now < new Date(y,11,26);
+  var target = (now < thisXmas || isXmasDay) ? thisXmas : christmas(y+1);
+  var start = christmas(target.getFullYear() - 1);
+  var pct = Math.max(0, Math.min(100, ((now - start) / (target - start)) * 100));
+  var daysLeft = Math.max(Math.ceil((target - now) / 86400000), 0);
+  return {pct:pct, state: isXmasDay ? "arrived" : "enroute", daysLeft:daysLeft};
+}
+function renderTracker(){
+  var s = computeSeason();
+  var rig = document.getElementById("sleighRig");
+  var rigImg = rig.querySelector("img");
+  var tracker = document.querySelector(".tracker");
+  var trailFill = document.getElementById("trailFill");
+  var curveSvg = document.getElementById("badgeCurveSvg");
+  var badgeSr = document.getElementById("trackerBadgeSr");
+  var t = s.pct / 100;
+  /* The sleigh image's own rendered width (fixed in CSS px, but a real chunk of
+     the tracker's width on anything narrower than a wide desktop) has to be
+     subtracted from how far right "100%" can mean, or the image's own right
+     edge runs past the tracker's right edge and gets cut off by its
+     overflow:hidden as the date approaches Christmas (left maxes out at 93%).
+     offsetWidth reads the image's un-rotated layout box; the +12% pads for how
+     much wider its rotated bounding box can get at the sleigh's steepest tilt,
+     which offsetWidth alone doesn't capture. */
+  var trackerWidthPx = tracker ? tracker.getBoundingClientRect().width : 0;
+  var imgWidthPx = (rigImg && rigImg.offsetWidth) || 230;
+  var imgWidthPct = trackerWidthPx ? (imgWidthPx / trackerWidthPx * 100) : 18;
+  var rightClearance = imgWidthPct * 1.12 + 2;
+  var maxLeft = Math.max(20, 100 - rightClearance);
+  var left = 5 + t * (maxLeft - 5);
+  /* top% has to be read off the trail SVG's own curve at the sleigh's ACTUAL
+     left% — not off t directly — now that left% is sometimes pulled back from
+     where t alone would put it (see rightClearance above). The curve
+     ("M 5 40 Q 49 -18 93 40") is a quadratic Bezier whose x run (5 to 93) is
+     linear in its own parameter since the control point sits exactly on the
+     midline, so that parameter is recoverable from left% directly; its y
+     (40 -> -18 -> 40) is evaluated at that same parameter, keeping the sleigh
+     glued to the curve at whatever x it actually ends up at instead of
+     drifting off it once the x formula stops being a straight 5-to-93 map. */
+  /* The arc's rise is capped relative to the screen's WIDTH: on a wide screen
+     this is the original -18 control point, but on a tall phone a rise set
+     as a % of height made the arc nearly vertical at both ends, with no room
+     along it for the countdown. CURVE_CTRL is the control point's y in %. */
+  var trackerHeightPx = tracker ? tracker.getBoundingClientRect().height : 0;
+  var risePct = trackerHeightPx ? Math.min(29, 30 * trackerWidthPx / trackerHeightPx) : 29;
+  var CURVE_CTRL = 40 - 2 * risePct;
+  var curveD = "M 5 40 Q 49 " + CURVE_CTRL.toFixed(2) + " 93 40";
+  document.querySelectorAll(".trail-bg, .trail-fill").forEach(function(p){ if (p.getAttribute("d") !== curveD) p.setAttribute("d", curveD); });
+  var curveT = Math.max(0, Math.min(1, (left - 5) / 88));
+  var top = (1 - curveT) * (1 - curveT) * 40 + 2 * (1 - curveT) * curveT * CURVE_CTRL + curveT * curveT * 40;
+  /* `top` places the IMAGE'S OWN top edge on the curve — but the sleigh and
+     moon sit well below that edge in the source art (their own visual center
+     is roughly 40% down the image, measured directly off the asset), not
+     right at it, so the graphic read as hanging below the line instead of
+     riding on it. Lifting by that same fraction of the image's actual
+     rendered height (in tracker-relative %, since `top` is a % of the
+     tracker, not the image) puts the sleigh+moon cluster's center on the
+     curve instead of its top edge. */
+  var imgHeightPx = (rigImg && rigImg.offsetHeight) || (imgWidthPx / 1.507);
+  var LIFT_FRACTION = 0.4;
+  var liftPct = trackerHeightPx ? (imgHeightPx * LIFT_FRACTION / trackerHeightPx * 100) : 0;
+  top -= liftPct;
+  var tilt = Math.cos(Math.PI * t) * 9;
+  /* The countdown rides the same quadratic Bezier as .trail-bg ("M 5 40 Q
+     49 -18 93 40" in 0-100 units of the tracker's box), recomputed in real
+     pixels so letters aren't squashed by .trail-svg's non-uniform viewBox.
+     fitBadgeToCurve lays the text out from these numbers. */
+  if (curveSvg && trackerWidthPx && trackerHeightPx){
+    curveSvg.setAttribute("viewBox", "0 0 " + trackerWidthPx + " " + trackerHeightPx);
+    var numSvg = document.getElementById("badgeNumSvg");
+    if (numSvg) numSvg.setAttribute("viewBox", "0 0 " + trackerWidthPx + " " + trackerHeightPx);
+    badgeLayout.w = trackerWidthPx;
+    badgeLayout.p0 = {x: 0.05 * trackerWidthPx, y: 0.40 * trackerHeightPx};
+    badgeLayout.c  = {x: 0.49 * trackerWidthPx, y: CURVE_CTRL / 100 * trackerHeightPx};
+    badgeLayout.p1 = {x: 0.93 * trackerWidthPx, y: 0.40 * trackerHeightPx};
+    badgeLayout.sleighX0 = left / 100 * trackerWidthPx;
+    badgeLayout.sleighX1 = left / 100 * trackerWidthPx + imgWidthPx * 1.08;
+  }
+  /* The glowing line used to reveal up to raw s.pct of the path — but the
+     sleigh itself sits at curveT (the path position its clamped left% maps
+     to, see above), which runs short of s.pct whenever the overflow clamp is
+     active (i.e. almost always, since maxLeft is below 93 by default). That
+     let the bright line draw past the sleigh's actual position. Tying it to
+     curveT keeps it in sync, and the small GAP stops it a touch short of the
+     sleigh instead of running right up to (or under) the image. */
+  var GAP = 3;
+  var fillPct = Math.max(0, curveT * 100 - GAP);
+  requestAnimationFrame(function(){
+    rig.style.left = left + "%";
+    rig.style.top = top + "%";
+    rig.style.setProperty("--tilt", tilt + "deg");
+    trailFill.style.strokeDashoffset = (100 - fillPct) + "";
+  });
+  badgeLayout.chunks = s.state === "arrived"
+    ? ["Il est arrivé !", "Joyeux Noël !"]
+    : [s.daysLeft + " jour" + (s.daysLeft===1?"":"s") + " avant Noël", Math.round(s.pct) + "\u00a0% du chemin parcouru", "depuis le dernier Noël"];
+  badgeLayout.text = s.state === "arrived" ? badgeLayout.chunks.join(" ") : badgeLayout.chunks[0] + " · " + badgeLayout.chunks[1] + " " + badgeLayout.chunks[2];
+  if (badgeSr) badgeSr.textContent = badgeLayout.text;
+  fitBadgeToCurve();
+}
+/* Lays the countdown out along the curve, never over the sleigh: only the
+   stretch of curve that's actually free (before the sleigh or after it,
+   whichever is longer) is used. Each line rides its own copy of the curve
+   offset along the curve's normal, not shifted straight up, so the gap above
+   the line is the same everywhere, including the steep ends. On a wide
+   screen the text stays one line and only shrinks as much as it must; on a
+   phone, where barely a third of the curve is free, it wraps onto up to
+   three stacked curved lines instead of shrinking past readability. Widths
+   are measured with a canvas pass in the same font. */
+var badgeLayout = {};
+function fitBadgeToCurve(){
+  var svg = document.getElementById("badgeCurveSvg");
+  var L = badgeLayout;
+  if (!svg || !L.p0 || !L.text) return;
+  var NS = "http://www.w3.org/2000/svg";
+  var mobile = L.w <= 640;
+  var BASE = mobile ? 19 : 21.6, MIN = mobile ? 15 : 12, MAX_LINES = mobile ? 4 : 1;
+  function pt(t){
+    var u = 1 - t;
+    return {x: u*u*L.p0.x + 2*u*t*L.c.x + t*t*L.p1.x, y: u*u*L.p0.y + 2*u*t*L.c.y + t*t*L.p1.y};
+  }
+  function nrm(t){
+    var dx = 2*(1-t)*(L.c.x-L.p0.x) + 2*t*(L.p1.x-L.c.x), dy = 2*(1-t)*(L.c.y-L.p0.y) + 2*t*(L.p1.y-L.c.y);
+    var m = Math.hypot(dx, dy) || 1;
+    return {x: dy/m, y: -dx/m};
+  }
+  function tAtX(x){ return Math.max(0, Math.min(1, (x - L.p0.x) / (L.p1.x - L.p0.x))); }
+  function arc(ta, tb){ var s = 0, p = pt(ta); for (var i = 1; i <= 40; i++){ var q = pt(ta + (tb-ta)*i/40); s += Math.hypot(q.x-p.x, q.y-p.y); p = q; } return s; }
+  var MARGIN = 10;
+  var before = [0, tAtX(L.sleighX0 - MARGIN)], after = [tAtX(L.sleighX1 + MARGIN), 1];
+  var seg = arc(before[0], before[1]) >= arc(after[0], after[1]) ? before : after;
+  function offsetPath(d){
+    var pts = [], len = 0, prev = null;
+    for (var i = 0; i <= 80; i++){
+      var t = seg[0] + (seg[1]-seg[0])*i/80, p = pt(t), n = nrm(t);
+      var q = {x: p.x + n.x*d, y: p.y + n.y*d};
+      if (q.x < 8 || q.x > L.w - 8) continue;
+      if (prev) len += Math.hypot(q.x-prev.x, q.y-prev.y);
+      pts.push(q.x.toFixed(1) + " " + q.y.toFixed(1)); prev = q;
+    }
+    return {d: pts.length > 1 ? "M " + pts.join(" L ") : "M 0 0", len: len};
+  }
+  var canvas = fitBadgeToCurve._canvas || (fitBadgeToCurve._canvas = document.createElement("canvas"));
+  var ctx = canvas.getContext("2d");
+  var words = L.text.split(" ");
+  function layout(f, n){
+    ctx.font = "700 " + f + "px 'Mountains of Christmas', cursive";
+    var gap = 10 + 0.35*f, lead = 1.15*f, paths = [];
+    for (var i = 0; i < n; i++) paths.push(offsetPath(gap + (n-1-i)*lead));
+    var lines = [], cur = "", li = 0;
+    for (var w = 0; w < words.length; w++){
+      var trial = cur ? cur + " " + words[w] : words[w];
+      if (ctx.measureText(trial).width <= paths[li].len * 0.97 || !cur){ cur = trial; continue; }
+      lines.push(cur); cur = words[w]; li++;
+      if (li >= n) return null;
+    }
+    lines.push(cur);
+    for (var k = 0; k < lines.length; k++){
+      if (ctx.measureText(lines[k]).width > paths[k].len * 0.97) return null;
+      lines[k] = lines[k].replace(/^· /, "").replace(/ ·$/, "");
+    }
+    return {f: f, lines: lines};
+  }
+  /* Lines break between whole phrases ("41 jours avant Noël" / "89% du
+     chemin parcouru" / "depuis le dernier Noël"), never mid-phrase: every
+     way of grouping the phrases into at most MAX_LINES lines is tried at
+     the largest font that fits, keeping the biggest text (fewest lines on a
+     tie). Word-by-word wrapping is only the fallback if a phrase can't fit. */
+  var chunks = L.chunks || [L.text];
+  function joinChunks(list, from){ return list.map(function(c, i){ return (i === 0 ? "" : (from + i === 1 && chunks.length > 2 ? " · " : " ")) + c; }).join(""); }
+  function groupings(k, n){
+    if (n === 1) return [[k]];
+    var out = [];
+    for (var first = 1; first <= k - n + 1; first++) groupings(k - first, n - 1).forEach(function(g){ out.push([first].concat(g)); });
+    return out;
+  }
+  function tryGrouping(sizes, f){
+    ctx.font = "700 " + f + "px 'Mountains of Christmas', cursive";
+    var n = sizes.length, gap = 10 + 0.35*f, lead = 1.15*f, lines = [], at = 0;
+    for (var i = 0; i < n; i++){
+      var line = joinChunks(chunks.slice(at, at + sizes[i]), at); at += sizes[i];
+      if (ctx.measureText(line).width > offsetPath(gap + (n-1-i)*lead).len * 0.97) return null;
+      lines.push(line);
+    }
+    return {f: f, lines: lines};
+  }
+  var best = null;
+  for (var n = 1; n <= Math.min(MAX_LINES, chunks.length); n++){
+    groupings(chunks.length, n).forEach(function(sizes){
+      for (var f = BASE; f >= MIN; f -= 0.5){
+        var r = tryGrouping(sizes, f);
+        if (r){ if (!best || r.f > best.f + 0.4) best = r; break; }
+      }
+    });
+  }
+  if (!best){
+    for (var n2 = 1; n2 <= MAX_LINES && !best; n2++){
+      for (var f2 = BASE; f2 >= MIN; f2 -= 0.5){ var r2 = layout(f2, n2); if (r2){ best = r2; break; } }
+    }
+  }
+  if (!best){ best = layout(MIN, MAX_LINES) || {f: MIN, lines: [L.text]}; }
+  var anchorEnd = seg === before;
+  var numLayer = document.getElementById("badgeNumSvg");
+  Array.prototype.slice.call(svg.querySelectorAll(".badge-line")).forEach(function(el){ el.remove(); });
+  if (numLayer) Array.prototype.slice.call(numLayer.querySelectorAll(".badge-line")).forEach(function(el){ el.remove(); });
+  var nLines = best.lines.length, gap = 10 + 0.35*best.f, lead = 1.15*best.f;
+  best.lines.forEach(function(line, i){
+    var path = document.createElementNS(NS, "path");
+    path.setAttribute("id", "badgeLine" + i);
+    path.setAttribute("class", "badge-line");
+    path.setAttribute("fill", "none");
+    path.setAttribute("d", offsetPath(gap + (nLines-1-i)*lead).d);
+    var text = document.createElementNS(NS, "text");
+    text.setAttribute("class", "badge-curve-text badge-line");
+    text.style.fontSize = best.f + "px";
+    var tp = document.createElementNS(NS, "textPath");
+    tp.setAttribute("href", "#badgeLine" + i);
+    if (anchorEnd){ tp.setAttribute("startOffset", "100%"); tp.setAttribute("text-anchor", "end"); }
+    line.split(/(\d+(?:\u00a0%)?)/).forEach(function(part, k){
+      if (!part) return;
+      if (k % 2){
+        var num = document.createElementNS(NS, "tspan");
+        num.setAttribute("class", "badge-num");
+        num.textContent = part;
+        tp.appendChild(num);
+      } else tp.appendChild(document.createTextNode(part));
+    });
+    text.appendChild(tp);
+    svg.appendChild(path);
+    svg.appendChild(text);
+    if (numLayer){
+      // Identical copy for the shadow-free top layer (its own path id).
+      var path2 = path.cloneNode(true), text2 = text.cloneNode(true);
+      path2.setAttribute("id", "badgeNumLine" + i);
+      text2.querySelector("textPath").setAttribute("href", "#badgeNumLine" + i);
+      numLayer.appendChild(path2);
+      numLayer.appendChild(text2);
+    }
+  });
+}
+renderTracker();
+setInterval(renderTracker, 60 * 60 * 1000);
+var badgeFitResizeTimer;
+window.addEventListener("resize", function(){
+  clearTimeout(badgeFitResizeTimer);
+  badgeFitResizeTimer = setTimeout(function(){
+    renderTracker();
+  }, 150);
+});
+/* Both fitBadgeToCurve (above) and fitNameRevealText (stage video section,
+   below) measure text with a throwaway <canvas> set to 'Mountains of
+   Christmas' — but that font loads async from Google Fonts, and setting
+   ctx.font to a family that hasn't finished loading yet silently falls back
+   to the canvas default (serif) instead of erroring, so the very first
+   measurement on page load (before the font is ready) under- or over-shrinks
+   against the wrong glyph widths. Re-running both once document.fonts.ready
+   actually resolves corrects that first guess; if the font was already
+   cached and ready, this just repeats the same correct result. */
+if (document.fonts && document.fonts.ready){
+  document.fonts.ready.then(function(){
+    fitBadgeToCurve();
+    if (typeof positionNameReveal === "function") positionNameReveal();
+  });
+}
+
+/* ---------------- full-screen intro sequence: click-to-advance ----------------
+   scroll-snap (see html{scroll-snap-type}) already handles wheel/touch; this
+   covers the "or on click" half of the brief for anyone who taps the chevron
+   instead of scrolling. */
+document.querySelectorAll(".scroll-next-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var sel = btn.getAttribute("data-scroll-target");
+    var target = sel && document.querySelector(sel);
+    if (target) target.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+});
+
+/* snowfall across whole page */
+(function snow(){
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var field = document.getElementById("snowfield");
+  if (reduce) return;
+  var count = window.innerWidth < 640 ? 30 : 52;
+  for (var i=0;i<count;i++){
+    var f = document.createElement("div");
+    var isNear = Math.random() < 0.3;
+    var size = isNear ? (Math.random()*10+9) : (Math.random()*4+2);
+    var blur = isNear ? (Math.random()*2+1.5) : 0;
+    var dur = Math.random()*14+10;
+    var delay = Math.random()*dur;
+    var drift = (Math.random()*60-30);
+    f.style.position="absolute";
+    f.style.top="-10px";
+    f.style.left=(Math.random()*100)+"%";
+    f.style.width=size+"px";f.style.height=size+"px";
+    f.style.borderRadius="50%";
+    f.style.background="rgba(247,245,239,"+(isNear ? Math.random()*.3+.25 : Math.random()*.5+.4)+")";
+    if (blur) f.style.filter = "blur(" + blur + "px)";
+    f.style.animation="snowfall "+dur+"s linear "+(-delay)+"s infinite";
+    f.style.setProperty("--drift", drift+"px");
+    field.appendChild(f);
+  }
+  var styleTag = document.createElement("style");
+  styleTag.id = "snowKeyframesStyle";
+  styleTag.textContent = "@keyframes snowfall{0%{transform:translate(0,0)}100%{transform:translate(var(--drift),110vh)}}";
+  document.head.appendChild(styleTag);
+})();
+
+/* Santa's desk is indoors, so the snow fades out as that last section
+   scrolls in (fully gone once it covers ~60% of the screen) and comes back
+   if you scroll up again; while hidden its animations are paused. */
+(function snowStopsIndoors(){
+  var field = document.getElementById("snowfield");
+  var stage = document.getElementById("stageSection");
+  if (!field || !stage) return;
+  var ticking = false;
+  function update(){
+    ticking = false;
+    var h = window.innerHeight || 1;
+    if (!stage.offsetParent){ field.style.opacity = "1"; field.classList.remove("indoors"); return; }
+    var seam = -parseFloat(getComputedStyle(stage).marginTop) || 0;
+    var cover = Math.max(0, Math.min(1, (h - stage.getBoundingClientRect().top - seam) / h));
+    var o = 1 - Math.min(1, cover / 0.6);
+    field.style.opacity = o.toFixed(3);
+    field.classList.toggle("indoors", o <= 0.01);
+  }
+  function schedule(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
+  window.addEventListener("scroll", schedule, {passive: true});
+  window.addEventListener("resize", schedule);
+  update();
+})();
+
+/* ---------------- elves video ----------------
+   The original clip has a flash baked into its last frames and its dance
+   doesn't loop cleanly, which used to be hidden by two copies of the video
+   cross-fading into each other in the page. iPhones in Low Power Mode never
+   let the second copy play, so after the first cross-fade both ended up
+   invisible and the section went blank. The cross-fade is now baked into the
+   file itself (elves-loop.mp4 ends exactly where it begins), so it's one
+   ordinary looping video. rosterVideoControl is the play/pause the
+   section-visibility code below uses. */
+var rosterVideoControl = (function(){
+  var v = document.getElementById("rosterVideoA");
+  if (!v) return null;
+  return {
+    play: function(){ v.muted = true; v.playsInline = true; var p = v.play(); if (p && p.catch) p.catch(function(){}); },
+    pause: function(){ v.pause(); }
+  };
+})();
+
+/* ---------------- intro overlay autoplay: belt-and-suspenders ----------------
+   The loading/"Entrer" videos aren't inside a scrollable section — they're the
+   very first thing shown, before there's anything to scroll to — so they keep
+   the old eager-autoplay treatment on their own, separate from every other
+   video on the page (see sectionVideoPlayback below for those). Mobile
+   browsers are picky about autoplay in several independent ways, so this
+   stacks every mitigation rather than betting on one:
+   1) the `muted`/`playsinline` *properties* (not just HTML attributes) have
+      to be set in JS for some engines to grant autoplay at all;
+   2) a video whose data wasn't ready yet when play() was first tried needs
+      a retry once it actually has enough buffered to play;
+   3) and a direct user gesture (tap on Entrer, or just the first tap
+      anywhere) is the most reliable unlock of all, so that's covered too. */
+(function introVideoAutoplay(){
+  var introVideos = Array.prototype.slice.call(document.querySelectorAll("#introOverlay video"));
+  if (!introVideos.length) return;
+
+  function tryPlay(v){
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+    var p = v.play();
+    if (p && p.catch) p.catch(function(){});
+  }
+
+  introVideos.forEach(function(v){
+    tryPlay(v);
+    v.addEventListener("loadeddata", function(){ tryPlay(v); });
+    v.addEventListener("canplay", function(){ tryPlay(v); });
+  });
+
+  function kickAll(){
+    introVideos.forEach(tryPlay);
+    document.removeEventListener("touchstart", kickAll);
+    document.removeEventListener("pointerdown", kickAll);
+  }
+  document.addEventListener("touchstart", kickAll, {once:true, passive:true});
+  document.addEventListener("pointerdown", kickAll, {once:true, passive:true});
+})();
+
+/* ---------------- section videos: only play once actually scrolled into view
+   ----------------
+   Every full-bleed background video past the intro (the sleigh tracker, the
+   dancing elves, both fireside/workshop transition clips, Santa's desk) used
+   to autoplay immediately on load AND stay playing regardless of whether its
+   section was ever seen — several videos decoding and playing at once from
+   the moment the page opens, most of them for a slide nobody has scrolled to
+   yet. Each one now pauses again the moment its own <section> scrolls out of
+   view, and only resumes once that section actually intersects the viewport
+   again — each config here observes its own <section> (not the video
+   directly), so the elves can use their own rosterVideoControl play()/pause().
+   The `autoplay` HTML attribute stays on every one of these tags (see the
+   markup) rather than leaving playback entirely to this observer's own
+   play() calls: real mobile Safari, unlike this file's desktop/Chromium
+   testing, was silently refusing those script-only play() calls on a video
+   that was never marked autoplay from parse time, leaving every section but
+   the one on screen at load permanently black. Keeping `autoplay` costs
+   nothing visible — every one of these sections starts off-screen, so the
+   instant of real playback before this observer's own initial callback
+   (fired as soon as it starts observing) pauses it back down is never seen —
+   but it's what gets the video actually decoding frames at all on stricter
+   mobile browsers, which this observer's pause()/play() calls then only ever
+   toggle rather than having to cold-start themselves. */
+var sectionVideoSync = null;
+var stageEverStarted = false;
+(function sectionVideoPlayback(){
+  var syncers = [];
+
+  function tryPlay(v){
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+    var p = v.play();
+    if (p && p.catch) p.catch(function(){});
+  }
+
+  var configs = [
+    { section: ".tracker", video: document.querySelector(".tracker-video-bg") },
+    { section: "#rosterSection", control: {
+        play: function(){ if (rosterVideoControl) rosterVideoControl.play(); },
+        pause: function(){ if (rosterVideoControl) rosterVideoControl.pause(); }
+      } },
+    { section: "#workshopTransition", video: document.querySelector("#workshopTransition video") },
+    /* Santa's desk: once stageAsked is true (the clip has already paused
+       itself waiting for a name, see checkStageAsk) this must NOT
+       resume on its own just because the section scrolled back into view —
+       only resumeStageVideoForReveal (a name actually being submitted) is
+       allowed to continue it past that point. Before that, or once a name
+       has been submitted (stageGateOpen), ordinary visibility play/pause
+       applies same as every other section. */
+    /* Santa's desk only starts once its section fills (nearly) the whole
+       screen, and the first time it really starts it's from the beginning,
+       even if the phone briefly ran it on load. */
+    { section: "#stageSection", video: document.querySelector("#stageVideoBg"), playAt: 0.9, pauseBelow: 0.6, control: {
+        play: function(){
+          var v = document.querySelector("#stageVideoBg");
+          if (!v || (stageAsked && !stageGateOpen)) return;
+          if (!stageEverStarted && !stageGateOpen){ try { v.currentTime = 0; } catch (e) {} }
+          stageEverStarted = true;
+          tryPlay(v);
+        },
+        pause: function(){
+          var v = document.querySelector("#stageVideoBg");
+          if (v) v.pause();
+        }
+      } }
+  ];
+
+  configs.forEach(function(cfg){
+    var sectionEl = document.querySelector(cfg.section);
+    if (!sectionEl) return;
+    var control = cfg.control || {
+      play: function(){ if (cfg.video) tryPlay(cfg.video); },
+      pause: function(){ if (cfg.video) cfg.video.pause(); }
+    };
+    /* "Coverage" is how much of the screen (or of the section, if it's
+       shorter than the screen) the section is showing: play at playAt or
+       more, pause below pauseBelow. */
+    var playAt = cfg.playAt || 0.2, pauseBelow = cfg.pauseBelow || 0.2;
+    syncers.push(function(){
+      var r = sectionEl.getBoundingClientRect(), h = window.innerHeight;
+      if (!r.height){ control.pause(); return; }
+      var cover = Math.max(0, Math.min(r.bottom, h) - Math.max(r.top, 0)) / Math.min(r.height, h);
+      if (cover >= playAt) control.play(); else if (cover < pauseBelow) control.pause();
+    });
+    if (cfg.video) cfg.video.addEventListener("loadeddata", function(){ sectionVideoSync(); });
+  });
+  sectionVideoSync = function(){ syncers.forEach(function(f){ f(); }); };
+  var ticking = false;
+  function schedule(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ ticking = false; sectionVideoSync(); });
+  }
+  window.addEventListener("scroll", schedule, {passive: true});
+  window.addEventListener("resize", schedule);
+  sectionVideoSync();
+})();
+
+/* ---------------- one tap unlocks every video (iPhone Low Power Mode) ----------------
+   In Low Power Mode (and some data-saver settings) iOS refuses to start ANY
+   video, muted or not, until the person has tapped, and shows its own big
+   play button on each one instead. The "Entrer" tap, or failing that the
+   first tap anywhere, is that gesture: each video is started inside it
+   (which is what iOS remembers as "allowed"), the ones that shouldn't be
+   running yet are put straight back where they were, and then the normal
+   scroll-based play/pause takes over. */
+(function unlockVideosOnFirstTap(){
+  var done = false;
+  window.unlockAllVideos = function(){
+    if (done) return;
+    done = true;
+    var vids = Array.prototype.slice.call(document.querySelectorAll("video"));
+    var pending = vids.map(function(v){
+      if (v.closest("#introOverlay")) return Promise.resolve();
+      var wasPaused = v.paused, t = v.currentTime;
+      v.muted = true; v.playsInline = true;
+      var p = v.play();
+      return (p && p.then ? p : Promise.resolve()).then(function(){
+        if (wasPaused){ v.pause(); try { v.currentTime = t; } catch (e) {} }
+      }, function(){});
+    });
+    Promise.all(pending).then(function(){ if (sectionVideoSync) sectionVideoSync(); });
+  };
+  ["touchend", "click"].forEach(function(type){
+    document.addEventListener(type, function(){ window.unlockAllVideos(); }, {capture: true, passive: true, once: true});
+  });
+})();
+
+/* ---------------- Safari: play videos from memory ----------------
+   The host serves video files whole and never in pieces (no byte ranges).
+   Safari, and every browser on iPhone/iPad since they all run on Safari's
+   engine, refuses to play a video served like that and shows nothing. There,
+   each video is downloaded in full and played from memory instead, one after
+   another in the order they appear, so the first ones are ready first. Every
+   tap also retries playback, since iOS (Low Power Mode, or this viewer's own
+   no-autoplay rule) may only start a video from a tap. */
+(function playVideosFromMemoryOnSafari(){
+  return; // not needed on GitHub Pages, which serves video in byte ranges
+  var ua = navigator.userAgent;
+  var iOS = /iP(hone|ad|od)/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var macSafari = /Safari/.test(ua) && !/Chrome|Chromium|CriOS|Edg|OPR|Firefox|FxiOS|Android/.test(ua);
+  if (!iOS && !macSafari) return;
+  var vids = Array.prototype.slice.call(document.querySelectorAll("video"));
+  var order = ["#introOverlay video", ".tracker-video-bg", "#rosterVideoA", "#workshopTransition video", "#stageVideoBg"];
+  vids.sort(function(a, b){
+    function rank(v){ for (var i = 0; i < order.length; i++) if (v.matches(order[i])) return i; return order.length; }
+    return rank(a) - rank(b);
+  });
+  function retry(){
+    var intro = document.getElementById("introOverlay");
+    if (intro && !intro.classList.contains("hide")){
+      intro.querySelectorAll("video").forEach(function(v){ var p = v.play(); if (p && p.catch) p.catch(function(){}); });
+    }
+    if (sectionVideoSync) sectionVideoSync();
+  }
+  document.addEventListener("touchend", retry, {passive: true});
+  document.addEventListener("click", retry, true);
+  vids.reduce(function(chain, v){
+    var srcEl = v.querySelector("source");
+    var url = srcEl ? srcEl.src : v.currentSrc;
+    if (!url) return chain;
+    return chain.then(function(){
+      return fetch(url).then(function(r){
+        if (!r.ok) throw new Error("http " + r.status);
+        return r.blob();
+      }).then(function(blob){
+        if (blob.type !== "video/mp4") blob = new Blob([blob], {type: "video/mp4"});
+        v.src = URL.createObjectURL(blob);
+        v.load();
+        if (v.id === "stageVideoBg") stageSourceFailed = false;
+        if (v.closest("#introOverlay")){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+        else if (sectionVideoSync) setTimeout(sectionVideoSync, 50);
+      }).catch(function(){});
+    });
+  }, Promise.resolve());
+})();
+
+/* ---------------- intro: loading -> enter ---------------- */
+(function intro(){
+  var overlay = document.getElementById("introOverlay");
+  if (!overlay) return;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var percentEl = document.getElementById("introPercent");
+  var loadingStage = document.getElementById("introLoading");
+  var enterStage = document.getElementById("introEnter");
+  var enterBtn = document.getElementById("introEnterBtn");
+
+  function dismiss(){
+    overlay.classList.add("hide");
+    setTimeout(function(){
+      overlay.style.display = "none";
+      overlay.querySelectorAll("video").forEach(function(v){ v.pause(); });
+    }, 700);
+    /* The curve-and-sleigh wipe (see .trail-reveal) starts the instant the
+       overlay begins fading, so the timeline is already mid-reveal by the
+       time the video underneath becomes visible, not static and waiting. */
+    var trailReveal = document.getElementById("trailReveal");
+    if (trailReveal) requestAnimationFrame(function(){ trailReveal.classList.add("revealed"); });
+  }
+  /* Mobile browsers often refuse autoplay without a user gesture, even when muted.
+     The "Entrer" tap IS that gesture, so kick the intro videos' playback
+     explicitly here instead of relying on the autoplay attribute alone.
+     Scoped to #introOverlay only, not every <video> on the page — the
+     sleigh tracker, roster, transition and stage videos are deliberately
+     NOT playing yet at this point (see sectionVideoPlayback): they each
+     start only once their own section is actually scrolled into view, and
+     this tap-driven kick must not override that by force-starting all of
+     them immediately. */
+  function kickstartVideos(){
+    overlay.querySelectorAll("video").forEach(function(v){
+      v.muted = true;
+      v.playsInline = true;
+      var p = v.play();
+      if (p && p.catch) p.catch(function(){});
+    });
+  }
+  enterBtn.addEventListener("click", function(){ kickstartVideos(); if (window.unlockAllVideos) window.unlockAllVideos(); dismiss(); });
+
+  if (reduce){ kickstartVideos(); dismiss(); return; }
+
+  var pct = 0;
+  var timer = setInterval(function(){
+    pct += Math.random()*16 + 7;
+    if (pct >= 100){
+      pct = 100;
+      clearInterval(timer);
+      setTimeout(function(){
+        loadingStage.style.display = "none";
+        /* The enter stage (and its video) has been rendered — just invisible and
+           non-interactive — since page load, so by now it's had the whole loading
+           screen's duration to buffer and start playing; this is just one more kick
+           for good measure before the fade-in reveals it. */
+        kickstartVideos();
+        requestAnimationFrame(function(){ enterStage.classList.add("show"); });
+      }, 400);
+    }
+    percentEl.textContent = Math.round(pct) + "%";
+  }, 240);
+})();
+
+/* ---------------- helpers: slug + obfuscation ---------------- */
+function slug(name){
+  return (name||"").toString().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"") || "guest";
+}
+function strToBytes(str){ return new TextEncoder().encode(str); }
+function bytesToStr(bytes){ return new TextDecoder().decode(bytes); }
+function xorBytes(bytes, key){
+  var k = strToBytes(key);
+  var out = new Uint8Array(bytes.length);
+  for (var i=0;i<bytes.length;i++) out[i] = bytes[i] ^ k[i % k.length];
+  return out;
+}
+function b64urlFromBytes(bytes){
+  var bin = "";
+  for (var i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function bytesFromB64url(str){
+  str = str.replace(/-/g,"+").replace(/_/g,"/");
+  while (str.length % 4) str += "=";
+  var bin = atob(str);
+  var out = new Uint8Array(bin.length);
+  for (var i=0;i<bin.length;i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+function pack(obj){
+  try{ return b64urlFromBytes(xorBytes(strToBytes(JSON.stringify(obj)), SALT)); }
+  catch(e){ return null; }
+}
+function unpack(str){
+  try{ return JSON.parse(bytesToStr(xorBytes(bytesFromB64url(str), SALT))); }
+  catch(e){ return null; }
+}
+
+/* ---------------- the draw: no self, no exclusions, no mutual pairs ---------------- */
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t=a[i];a[i]=a[j];a[j]=t;
+  }
+  return a;
+}
+function pairKey(a,b){ return [a,b].sort().join("|"); }
+function computeDraw(names, exclusionPairs){
+  var excluded = {};
+  exclusionPairs.forEach(function(p){ excluded[pairKey(p[0],p[1])] = true; });
+  var givers = shuffle(names);
+  for (var attempt=0; attempt<60; attempt++){
+    var pool = shuffle(names);
+    var used = {}, result = {}, ok = true;
+    (function backtrack(i){
+      if (!ok || i >= givers.length) return;
+      var giver = givers[i];
+      /* No one draws themselves, no excluded pair, and no mutual pair: r can't
+         be someone who already gives to this giver. */
+      var candidates = pool.filter(function(r){
+        return !used[r] && r !== giver && !excluded[pairKey(giver,r)] && result[r] !== giver;
+      });
+      candidates = shuffle(candidates);
+      for (var c=0;c<candidates.length;c++){
+        var r = candidates[c];
+        used[r]=true; result[giver]=r;
+        backtrack(i+1);
+        if (ok && Object.keys(result).length === givers.length) return;
+        delete used[r]; delete result[giver];
+      }
+      if (Object.keys(result).length < givers.length && i === givers.length-1) ok = false;
+    })(0);
+    if (Object.keys(result).length === givers.length) return result;
+  }
+  return null;
+}
+
+/* ---------------- state: embedded in the page itself, no sign-in needed to read ---------------- */
+function readSeed(){
+  try{
+    var parsed = JSON.parse(document.getElementById("seedData").textContent);
+    if (!parsed.names) parsed.names = [];
+    if (!parsed.exclusions) parsed.exclusions = [];
+    if (!parsed.assignments) parsed.assignments = {};
+    return parsed;
+  }catch(e){
+    return {names:[], exclusions:[], drawn:false, assignments:{}};
+  }
+}
+var STATE = readSeed();
+
+/* ---------------- roster + name picker (public, no capability needed) ---------------- */
+/* x/top-of-hat and x/bottom-of-feet position (% of the elves scene, i.e. of the
+   actual video frame — NOT of the section around it) of each elf character in the
+   Canva video, measured directly off an extracted video frame (not eyeballed from
+   the rendered page). */
+var ELF_POSITIONS = [
+  {left:7,  top:56, bottom:91}, {left:19, top:58, bottom:93}, {left:26, top:62, bottom:95}, {left:37, top:62, bottom:95},
+  {left:47, top:60, bottom:94}, {left:58, top:59, bottom:93}, {left:68, top:60, bottom:94}, {left:78, top:58, bottom:93},
+  {left:87, top:59, bottom:93}, {left:96, top:58, bottom:93}
+];
+/* left-to-right order of the elf characters in the Canva video */
+var ELF_ORDER = ["Patrice B","Patrice W","Alex","Marie","Lenny","Ben","Tommy","Christelle","Jocelyne","Alicia"];
+/* Names shown as a chip near their spot in the video but left out of the actual
+   Secret Santa pool (dropdown, exclusions, draw) — Lenny asked to step back from
+   this year's gift exchange without disappearing from the family lineup, and
+   Cassie (the gingerbread mascot standing between Alex and Marie) was never a
+   draw participant to begin with. Each entry needs its own position: Lenny
+   already has one in ELF_POSITIONS via ELF_ORDER; Cassie doesn't appear there at
+   all, so hers is measured and given directly, matching the same
+   left/top-of-head/bottom-of-feet shape. */
+var DECORATIVE_ONLY = ["Lenny"];
+/* Cassie's own measured head position — placed right above her, the same way
+   every adult elf's chip sits right above theirs. Treated as an "above" chip
+   (belowGroup:false) even though her head is much lower in the frame than the
+   adults' hat line: declutterChips reads each above-chip's ceiling from its own
+   head position now, specifically so a short character like Cassie settles
+   just above her own head instead of being pulled up to the adults' height.
+   Measured directly off an extracted video frame (left edge of her arms ~537px,
+   right ~617px, head top ~947px, feet ~1053px, out of 1920x1080) rather than
+   eyeballed off a rendered screenshot — an earlier version nudged this well off
+   her real position (31→35) chasing a visual overlap with Alex's face that was
+   actually a decluttering/clearance issue, not a horizontal-position one. */
+var DECORATIVE_POSITIONS = {
+  "Cassie": {left:30, top:88, bottom:97, belowGroup:false}
+};
+/* The elves video is 1920x1080: object-fit:cover (center 48%) on desktop, a
+   full-width uncropped band on phones (see the phone CSS). Chip and heading
+   positions are given as % of the video frame and projected through whichever
+   rectangle the video actually occupies, so names stay on their elves in both. */
+var ELVES_VIDEO_ASPECT = 1920 / 1080;
+/* ELF_POSITIONS now marks the top of each elf's hat, so this only needs to cover
+   the chip's own half-height plus a little breathing room above that — not the
+   much bigger, error-prone correction a body-center point would need — before any
+   other layout runs. Mobile gets its own, smaller fraction so its names sit
+   closer to the heads than desktop's — on mobile they otherwise read as sitting
+   noticeably higher above the elves than intended. */
+var CHIP_LIFT_FRAC_DESKTOP = 0.14;
+var CHIP_LIFT_FRAC_MOBILE = 0.07;
+/* Decorative chips (Cassie, Lenny) read as sitting noticeably further from
+   their own character than the regular chips do at the shared desktop
+   fraction above — there's no neighbor crowding to clear for a lone
+   decorative tag the way there is in the main row, so it can sit much closer
+   to its head instead. Desktop only: mobile keeps the shared mobile fraction. */
+var CHIP_LIFT_FRAC_DESKTOP_DECORATIVE = 0.05;
+/* Mirror of CHIP_LIFT_FRAC for the "below" chips, but pulling UP from the feet
+   line onto the open lower legs instead of dropping past it: the sidewalk strip
+   below the feet is only a few percent of the video's height — shallower than
+   half a chip's own height on most phone widths — so anchoring there (or below
+   it) reliably pushes part of the chip past the video's bottom edge into the
+   plain background. Landing on the legs instead keeps the whole chip inside the
+   video, still clearly below the waist and nowhere near a face, with real margin
+   left over for decluttering to use before it would ever need to escape the
+   video entirely. */
+var CHIP_LEG_LIFT_FRAC = 0.07;
+function getRosterVideoFit(){
+  var mobile = window.matchMedia && matchMedia("(max-width:640px)").matches;
+  return mobile ? {fit: "band"} : {fit: "cover", posX: 0.5, posY: 0.48};
+}
+/* Rectangle (in containerEl-local px) the video's picture occupies; shared by
+   chip and heading placement. On phones it's computed from the CSS (full width,
+   16:9, at its CSS top) rather than measured, since iOS can report a
+   not-yet-loaded video's size wrongly. */
+function getVideoRectInContainer(containerEl){
+  var cw = containerEl.clientWidth, ch = containerEl.clientHeight;
+  if (!cw || !ch) return null;
+  var cfg = getRosterVideoFit();
+  if (cfg.fit === "band"){
+    var section = containerEl.closest(".roster-section") || containerEl;
+    var vid = section.querySelector(".roster-video-bg");
+    var topPx = (vid ? parseFloat(getComputedStyle(vid).top) || 0 : 0) - (containerEl === section ? 0 : (containerEl.offsetTop || 0));
+    return {cw:cw, ch:ch, rw:cw, rh:cw / ELVES_VIDEO_ASPECT, ox:0, oy:topPx, fit:cfg.fit};
+  }
+  var rw, rh;
+  if (ELVES_VIDEO_ASPECT > cw / ch){ rh = ch; rw = ch * ELVES_VIDEO_ASPECT; }
+  else { rw = cw; rh = cw / ELVES_VIDEO_ASPECT; }
+  return {cw:cw, ch:ch, rw:rw, rh:rh, ox:(cw - rw) * cfg.posX, oy:(ch - rh) * cfg.posY, fit:cfg.fit};
+}
+/* On phones there's only a thin strip of sky between the heading and the hats,
+   not enough for one row of ten names, so every other chip sits on its elf's
+   lower legs instead. Desktop has room above every head for all of them. */
+function mapElfPosToContainer(pos, containerEl, belowVideo, decorative){
+  var rect = getVideoRectInContainer(containerEl);
+  if (!rect) return pos;
+  var px = rect.ox + (pos.left / 100) * rect.rw;
+  var py;
+  if (belowVideo && rect.fit === "band"){
+    py = rect.oy + (pos.bottom / 100) * rect.rh - CHIP_LEG_LIFT_FRAC * rect.rh;
+  } else {
+    var liftFrac = rect.fit === "band"
+      ? CHIP_LIFT_FRAC_MOBILE
+      : (decorative ? CHIP_LIFT_FRAC_DESKTOP_DECORATIVE : CHIP_LIFT_FRAC_DESKTOP);
+    py = rect.oy + (pos.top / 100) * rect.rh - liftFrac * rect.rh;
+  }
+  return {left: px / rect.cw * 100, top: py / rect.ch * 100};
+}
+/* On phones the heading goes on the video band itself, near its top; desktop
+   keeps its CSS position. */
+function positionHeadingOnVideo(){
+  var heading = document.getElementById("rosterHeading");
+  var section = document.querySelector(".roster-section");
+  if (!heading || !section) return;
+  var mobile = window.matchMedia && matchMedia("(max-width:640px)").matches;
+  if (!mobile){ heading.style.top = ""; return; }
+  var rect = getVideoRectInContainer(section);
+  if (!rect) return;
+  heading.style.top = (rect.oy + rect.rh * 0.01) + "px";
+}
+/* ---------------- the two pages ---------------- */
+var pushedSantaPage = false;
+function isSantaHash(){ return /pere-noel|reveal=/.test(window.location.hash || ""); }
+function showPage(page, push){
+  var santa = page === "santa";
+  document.body.classList.toggle("page-santa", santa);
+  if (push){
+    history.pushState({page: page}, "", santa ? "#pere-noel" : window.location.pathname + window.location.search);
+    pushedSantaPage = santa;
+  }
+  window.scrollTo(0, 0);
+  requestAnimationFrame(function(){
+    window.dispatchEvent(new Event("resize"));
+    window.dispatchEvent(new Event("scroll"));
+    if (sectionVideoSync) sectionVideoSync();
+  });
+}
+(function initPages(){
+  /* A fresh visit always starts on page 1 (after "Entrer"), even if the address
+     still carries #pere-noel from an earlier visit or a reload. Only a personal
+     reveal link (#reveal=...) opens straight on Santa's page. */
+  if (/pere-noel/.test(window.location.hash || "") && !/reveal=/.test(window.location.hash || "")){
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+  if (isSantaHash()) showPage("santa", false);
+  window.addEventListener("popstate", function(){ showPage(isSantaHash() ? "santa" : "elves", false); });
+  document.getElementById("toSantaBtn").addEventListener("click", function(e){
+    e.preventDefault();
+    showPage("santa", true);
+  });
+  document.getElementById("backToElves").addEventListener("click", function(e){
+    e.preventDefault();
+    if (pushedSantaPage){ history.back(); return; }
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+    showPage("elves", false);
+  });
+})();
+function goToSantaFor(name){
+  if (isPlayed(name)) return;
+  if (!document.body.classList.contains("page-santa")) showPage("santa", true);
+  var stage = document.getElementById("stageInner");
+  if (stage && stage.scrollIntoView) stage.scrollIntoView({behavior:"smooth", block:"center"});
+  var sel = document.getElementById("nameSelect");
+  if (sel && STATE.names.indexOf(name) !== -1){
+    sel.value = name;
+    sel.focus({preventScroll:true});
+    updateNameReveal();
+  }
+}
+/* ---------------- stage background video: the name on Santa's paper ---------------- */
+var STAGE_VIDEO_ASPECT = 1920 / 1080;
+/* The stage clip is a re-edit of the original: the hand-drawn laptop on
+   Santa's sheet of paper is painted out of every frame (tracked to the
+   sheet's own motion), and the ~0.8s where the sheet is mid-air and
+   motion-blurred is cut, so the computer never appears at all. Each row is
+   [time, then TL,TR,BR,BL x/y as fractions of the 1920x1080 frame] of a
+   landscape box lying along the sheet's long edge between Santa's hands,
+   sampled from that same tracking: the name follows the sheet's drift and
+   the camera's slow push-in instead of floating still above a moving page. */
+var NAME_PAPER_KEYFRAMES = [[27.2,0.4332,0.5073,0.6672,0.2854,0.7038,0.4174,0.4655,0.6395],[27.3,0.4306,0.506,0.6676,0.2899,0.7046,0.4225,0.4636,0.6378],[27.4,0.4301,0.5031,0.6694,0.2955,0.7054,0.4294,0.4625,0.6353],[27.5,0.4282,0.4996,0.6705,0.3069,0.7049,0.4411,0.4595,0.6324],[27.6,0.4284,0.4975,0.6684,0.3159,0.7027,0.4499,0.4586,0.6314],[27.7,0.4282,0.4977,0.6678,0.3227,0.7011,0.4577,0.4576,0.6324],[27.8,0.4275,0.5016,0.6654,0.326,0.6974,0.4623,0.4569,0.6373],[27.9,0.4245,0.5058,0.6623,0.3275,0.6941,0.4648,0.4556,0.6425],[28.0,0.4235,0.5096,0.6618,0.3271,0.6933,0.4656,0.4549,0.6465],[28.1,0.4226,0.512,0.6618,0.3274,0.6928,0.4664,0.4541,0.6491],[28.2,0.4225,0.5123,0.6613,0.3275,0.6924,0.4662,0.4539,0.65],[28.3,0.4225,0.5123,0.6616,0.3276,0.6926,0.466,0.4538,0.6501],[28.4,0.4225,0.5125,0.6612,0.3277,0.6922,0.4661,0.4539,0.6504],[28.5,0.4224,0.5124,0.6611,0.3279,0.6922,0.4662,0.4538,0.6504],[28.6,0.4222,0.5123,0.661,0.3281,0.6923,0.4661,0.4535,0.6503],[28.7,0.4222,0.5123,0.661,0.3282,0.6921,0.4662,0.4535,0.6501],[28.8,0.4224,0.5127,0.6621,0.3264,0.6927,0.4658,0.4538,0.6502],[28.9,0.4226,0.5129,0.6622,0.3261,0.6928,0.4657,0.454,0.6503],[29.0,0.4227,0.5131,0.6624,0.3258,0.6928,0.4657,0.4542,0.6503],[29.1,0.4227,0.5132,0.6624,0.3255,0.6932,0.4654,0.4543,0.6502],[29.2,0.4227,0.513,0.6616,0.3267,0.6929,0.4656,0.4543,0.6502],[29.3,0.4227,0.5128,0.6614,0.3273,0.6928,0.4658,0.4542,0.6499],[29.4,0.4229,0.5129,0.6616,0.3272,0.6928,0.4658,0.4542,0.6498],[29.5,0.423,0.5129,0.6616,0.3272,0.6926,0.4657,0.4543,0.6499],[29.6,0.4229,0.513,0.6621,0.327,0.6927,0.4657,0.4542,0.6499],[29.7,0.4229,0.5131,0.6627,0.3264,0.6929,0.4656,0.4543,0.6499],[29.8,0.4228,0.5131,0.6628,0.3264,0.6929,0.4658,0.4543,0.6498],[29.9,0.4227,0.513,0.6628,0.3267,0.6929,0.466,0.4541,0.6498],[30.0,0.4226,0.5127,0.6621,0.3275,0.6926,0.4662,0.454,0.6498],[30.1,0.4227,0.5127,0.6623,0.3273,0.6925,0.4663,0.4542,0.6495],[30.2,0.4227,0.5124,0.662,0.3278,0.6925,0.4663,0.4541,0.6495],[30.3,0.4227,0.5122,0.6617,0.3279,0.6925,0.4663,0.4542,0.6492],[30.4,0.4226,0.5121,0.6616,0.3283,0.6924,0.4665,0.4542,0.6491],[30.5,0.4225,0.5119,0.6613,0.3288,0.6926,0.4665,0.4541,0.649],[30.6,0.4225,0.5118,0.6612,0.3287,0.6925,0.4665,0.454,0.649],[30.7,0.4225,0.5118,0.6612,0.3287,0.6925,0.4665,0.454,0.649],[30.8,0.4224,0.5117,0.6608,0.329,0.6923,0.4664,0.4539,0.6492],[30.9,0.4223,0.5117,0.6605,0.3291,0.6921,0.4664,0.4539,0.6494],[31.0,0.4224,0.5119,0.6604,0.3289,0.6921,0.4662,0.4539,0.6496],[31.1,0.4225,0.5121,0.6605,0.3288,0.6922,0.4661,0.4539,0.6497],[31.2,0.4225,0.5122,0.6607,0.3287,0.6923,0.4661,0.4539,0.6497],[31.3,0.4224,0.5121,0.6608,0.3287,0.6925,0.4661,0.4538,0.6497],[31.4,0.4223,0.5121,0.6609,0.3287,0.6925,0.4661,0.4537,0.6497],[31.5,0.4224,0.5123,0.6613,0.3282,0.6927,0.466,0.4538,0.6497],[31.6,0.4223,0.5122,0.6612,0.3288,0.6926,0.4662,0.4537,0.6495],[31.7,0.4224,0.5123,0.6613,0.3285,0.6926,0.4661,0.4538,0.6496],[31.8,0.4225,0.5122,0.6617,0.3284,0.6929,0.4662,0.4539,0.6492],[31.9,0.4225,0.5122,0.6616,0.3284,0.6928,0.4662,0.454,0.6492],[32.0,0.4225,0.5122,0.6613,0.3286,0.6926,0.4662,0.454,0.6492],[32.1,0.4227,0.5125,0.6614,0.3282,0.6921,0.4662,0.4541,0.6494],[32.2,0.4226,0.5125,0.6613,0.3283,0.6921,0.4662,0.4541,0.6494],[32.3,0.4226,0.5125,0.6609,0.3284,0.6918,0.4661,0.454,0.6497],[32.4,0.4227,0.5127,0.6609,0.3283,0.6918,0.4662,0.4541,0.6498],[32.5,0.4226,0.5125,0.661,0.3281,0.6923,0.466,0.4541,0.6498],[32.6,0.4226,0.5124,0.6607,0.3282,0.6923,0.466,0.4541,0.6499],[32.7,0.4225,0.5123,0.6608,0.3282,0.6924,0.4661,0.454,0.6497],[32.8,0.4225,0.5122,0.6607,0.3283,0.6924,0.4661,0.4539,0.6496],[32.9,0.4224,0.512,0.6606,0.3286,0.6924,0.4662,0.4538,0.6494],[33.0,0.4224,0.512,0.6606,0.3286,0.6924,0.4662,0.4539,0.6495],[33.1,0.4224,0.5121,0.6606,0.3285,0.6924,0.4662,0.4539,0.6495],[33.2,0.4225,0.5121,0.6606,0.3285,0.6923,0.4663,0.454,0.6495],[33.3,0.4224,0.5121,0.6606,0.3286,0.6923,0.4664,0.454,0.6496],[33.4,0.4224,0.5122,0.6606,0.3286,0.6923,0.4664,0.454,0.6496],[33.5,0.4223,0.5122,0.6606,0.3288,0.6923,0.4665,0.454,0.6496],[33.6,0.4223,0.5122,0.6607,0.3288,0.6924,0.4665,0.4539,0.6496],[33.7,0.4223,0.5122,0.6607,0.3287,0.6924,0.4664,0.4539,0.6496],[33.8,0.4223,0.5123,0.6608,0.3285,0.6925,0.4663,0.4539,0.6496],[33.9,0.4223,0.5122,0.6607,0.3285,0.6925,0.4662,0.4539,0.6496],[34.0,0.4223,0.5121,0.6607,0.3286,0.6925,0.4663,0.4539,0.6495],[34.1,0.4223,0.5121,0.6607,0.3287,0.6925,0.4663,0.4538,0.6496],[34.2,0.4222,0.5121,0.6609,0.3289,0.6926,0.4664,0.4537,0.6495],[34.3,0.4222,0.5122,0.661,0.3289,0.6927,0.4664,0.4537,0.6495],[34.4,0.4222,0.5123,0.6611,0.3288,0.6928,0.4664,0.4537,0.6494],[34.5,0.4222,0.5123,0.6611,0.3289,0.6929,0.4664,0.4537,0.6495],[34.6,0.4222,0.5123,0.6611,0.329,0.6928,0.4665,0.4537,0.6495],[34.7,0.4221,0.5123,0.661,0.3291,0.6928,0.4665,0.4536,0.6496],[34.8,0.4221,0.5123,0.6611,0.3293,0.6928,0.4665,0.4536,0.6496],[34.9,0.4221,0.5123,0.661,0.3295,0.6927,0.4666,0.4535,0.6496],[35.0,0.4221,0.5123,0.6609,0.3297,0.6927,0.4667,0.4535,0.6496],[35.1,0.4221,0.5123,0.661,0.3297,0.6927,0.4667,0.4536,0.6495],[35.2,0.4221,0.5123,0.6611,0.3296,0.6928,0.4667,0.4535,0.6495],[35.3,0.4221,0.5122,0.661,0.3295,0.6928,0.4666,0.4535,0.6495],[35.4,0.4221,0.5123,0.6613,0.329,0.6931,0.4665,0.4536,0.6494],[35.5,0.4221,0.5123,0.6614,0.3288,0.6931,0.4664,0.4536,0.6495],[35.6,0.4222,0.5123,0.6613,0.3288,0.6931,0.4664,0.4536,0.6495],[35.7,0.4222,0.5123,0.6612,0.3289,0.693,0.4664,0.4536,0.6494],[35.8,0.4222,0.5123,0.6612,0.3289,0.693,0.4664,0.4536,0.6494],[35.9,0.4222,0.5123,0.6613,0.3289,0.6931,0.4664,0.4536,0.6494],[36.0,0.4222,0.5123,0.6614,0.3289,0.6931,0.4664,0.4536,0.6494],[36.1,0.4222,0.5124,0.6614,0.3287,0.693,0.4663,0.4536,0.6495],[36.2,0.4223,0.5124,0.6614,0.3287,0.693,0.4663,0.4537,0.6495],[36.3,0.4223,0.5125,0.6613,0.3286,0.6929,0.4662,0.4537,0.6496],[36.4,0.4223,0.5125,0.6612,0.3287,0.6928,0.4662,0.4538,0.6496],[36.5,0.4223,0.5124,0.6611,0.3288,0.6927,0.4661,0.4538,0.6496],[36.6,0.4223,0.5124,0.6611,0.3289,0.6927,0.4662,0.4537,0.6496],[36.7,0.4223,0.5124,0.6611,0.329,0.6927,0.4662,0.4537,0.6495],[36.8,0.4223,0.5123,0.6611,0.329,0.6927,0.4662,0.4537,0.6495],[36.9,0.4222,0.5123,0.6611,0.3291,0.6927,0.4663,0.4536,0.6495],[37.0,0.4222,0.5123,0.6611,0.3291,0.6927,0.4663,0.4536,0.6495],[37.1,0.4222,0.5123,0.6611,0.3291,0.6927,0.4663,0.4536,0.6495],[37.2,0.4222,0.5123,0.6611,0.3291,0.6927,0.4664,0.4536,0.6496],[37.3,0.4222,0.5123,0.6611,0.3291,0.6927,0.4664,0.4536,0.6497],[37.4,0.4223,0.5124,0.6612,0.329,0.6927,0.4663,0.4536,0.6498],[37.5,0.4223,0.5125,0.6612,0.3289,0.6927,0.4663,0.4536,0.6498],[37.6,0.4223,0.5125,0.6614,0.3288,0.6928,0.4663,0.4536,0.6498],[37.7,0.4223,0.5126,0.6615,0.3287,0.6928,0.4663,0.4536,0.6498],[37.8,0.4223,0.5126,0.6616,0.3287,0.6929,0.4663,0.4536,0.6498],[37.9,0.4223,0.5126,0.6616,0.3288,0.6929,0.4663,0.4535,0.6498],[38.0,0.4223,0.5126,0.6616,0.3288,0.6929,0.4663,0.4536,0.6498],[38.1,0.4223,0.5126,0.6616,0.3287,0.6929,0.4663,0.4536,0.6498],[38.2,0.4223,0.5127,0.6616,0.3288,0.6929,0.4663,0.4536,0.6498],[38.3,0.4223,0.5127,0.6616,0.3288,0.693,0.4663,0.4536,0.6498],[38.4,0.4223,0.5127,0.6616,0.3287,0.693,0.4663,0.4537,0.6498]];
+var NAME_BOX_W = 500, NAME_BOX_H = 160;
+/* Mirrors getRosterVideoFit/getVideoRectInContainer's own cover-fit math (see
+   below, in the roster section) but kept separate rather than generalizing
+   that pair into a shared helper: the two videos have different fit configs
+   (this one is always "cover", no mobile/contain switch).
+   Horizontal crop is centred on the frame, except during the overhead shot
+   of the paper (from OVERHEAD_SHOT_START, a hard cut, so the reframe can't
+   be seen): there it shifts only as far as needed to keep the whole name
+   box on screen. A phone shows barely a quarter of the frame's width and
+   would otherwise cut the name off; a desktop already fits it and stays put. */
+var OVERHEAD_SHOT_START = 27.2;
+function getStageVideoRect(containerEl, t){
+  var cw = containerEl.clientWidth, ch = containerEl.clientHeight;
+  if (!cw || !ch) return null;
+  var cAspect = cw / ch;
+  var posX = 0.5, posY = 0.4;
+  var widerThanContainer = STAGE_VIDEO_ASPECT > cAspect;
+  var rw, rh;
+  if (widerThanContainer){ rh = ch; rw = ch * STAGE_VIDEO_ASPECT; }
+  else { rw = cw; rh = cw / STAGE_VIDEO_ASPECT; }
+  if (rw > cw && t >= OVERHEAD_SHOT_START){
+    var q = namePaperQuadAt(t);
+    var lo = Math.min(q[0], q[2], q[4], q[6]) - 0.015, hi = Math.max(q[0], q[2], q[4], q[6]) + 0.015;
+    var hw = cw / (2 * rw);
+    var center = (hi - lo) > 2 * hw ? (lo + hi) / 2 : Math.min(Math.max(0.5, hi - hw), lo + hw);
+    posX = Math.min(1, Math.max(0, (cw / 2 - center * rw) / (cw - rw)));
+  }
+  var ox = (cw - rw) * posX, oy = (ch - rh) * posY;
+  return {cw:cw, ch:ch, rw:rw, rh:rh, ox:ox, oy:oy, posX:posX, posY:posY};
+}
+function applyStageFraming(){
+  var section = document.getElementById("stageSection");
+  var video = document.getElementById("stageVideoBg");
+  if (!section || !video) return null;
+  var rect = getStageVideoRect(section, video.currentTime || 0);
+  if (!rect) return null;
+  var pos = (rect.posX * 100).toFixed(2) + "% " + (rect.posY * 100) + "%";
+  if (video.style.objectPosition !== pos) video.style.objectPosition = pos;
+  return rect;
+}
+function namePaperQuadAt(t){
+  var k = NAME_PAPER_KEYFRAMES, n = k.length;
+  if (t <= k[0][0]) return k[0].slice(1);
+  if (t >= k[n-1][0]) return k[n-1].slice(1);
+  var lo = 0, hi = n - 1;
+  while (hi - lo > 1){ var mid = (lo + hi) >> 1; if (k[mid][0] <= t) lo = mid; else hi = mid; }
+  var a = k[lo], b = k[hi], f = (t - a[0]) / (b[0] - a[0]), out = [];
+  for (var i = 1; i < 9; i++) out.push(a[i] + (b[i] - a[i]) * f);
+  return out;
+}
+/* Projective map from a w x h box onto four on-screen points (Heckbert's
+   square-to-quad), as a CSS matrix3d — a true perspective fit, so the name
+   lies flat on the paper rather than being a rotated flat label. */
+function quadMatrix3d(w, h, p){
+  var x0=p[0].x,y0=p[0].y,x1=p[1].x,y1=p[1].y,x2=p[2].x,y2=p[2].y,x3=p[3].x,y3=p[3].y;
+  var dx1=x1-x2, dx2=x3-x2, dx3=x0-x1+x2-x3, dy1=y1-y2, dy2=y3-y2, dy3=y0-y1+y2-y3;
+  var a,b,c,d,e,f,g,hh;
+  var den = dx1*dy2 - dx2*dy1;
+  if (Math.abs(den) < 1e-9){ g = 0; hh = 0; }
+  else { g = (dx3*dy2 - dx2*dy3) / den; hh = (dx1*dy3 - dx3*dy1) / den; }
+  a = x1 - x0 + g*x1; b = x3 - x0 + hh*x3; c = x0;
+  d = y1 - y0 + g*y1; e = y3 - y0 + hh*y3; f = y0;
+  a /= w; d /= w; g /= w; b /= h; e /= h; hh /= h;
+  return "matrix3d(" + [a,d,0,g, b,e,0,hh, 0,0,1,0, c,f,0,1].join(",") + ")";
+}
+function positionNameReveal(){
+  var overlay = document.getElementById("nameRevealText");
+  var video = document.getElementById("stageVideoBg");
+  if (!overlay) return;
+  var rect = applyStageFraming();
+  if (!rect) return;
+  var q = namePaperQuadAt(video ? video.currentTime : 0), pts = [];
+  for (var i = 0; i < 4; i++) pts.push({x: rect.ox + q[i*2] * rect.rw, y: rect.oy + q[i*2+1] * rect.rh});
+  overlay.style.transform = quadMatrix3d(NAME_BOX_W, NAME_BOX_H, pts);
+  fitNameRevealText();
+}
+/* The box itself is a fixed size (the matrix3d above does all the scaling
+   to the screen), so the font only has to fit the box: shrink a long name
+   just as much as it needs, measured with a real canvas pass. */
+function fitNameRevealText(){
+  var overlay = document.getElementById("nameRevealText");
+  if (!overlay) return;
+  var base = NAME_BOX_H * 0.62, size = base, text = overlay.textContent;
+  if (text){
+    var canvas = fitNameRevealText._canvas || (fitNameRevealText._canvas = document.createElement("canvas"));
+    var ctx = canvas.getContext("2d");
+    ctx.font = "700 " + base + "px 'Mountains of Christmas', cursive";
+    var natural = ctx.measureText(text).width, available = NAME_BOX_W * 0.92;
+    if (natural > available) size = base * available / natural;
+  }
+  overlay.style.fontSize = size + "px";
+}
+/* Shown once the overhead shot has the sheet down on the desk and both hands
+   clear of the name's box, and only after a name has actually been decoded
+   (revealedMatchName, set in playRevealSequence — never the raw <select>). */
+var NAME_REVEAL_TIME = 28.3;
+function updateNameReveal(){
+  var video = document.getElementById("stageVideoBg");
+  var overlay = document.getElementById("nameRevealText");
+  var stageInner = document.getElementById("stageInner");
+  if (!video || !overlay) return;
+  if (overlay.textContent !== (revealedMatchName || "")) overlay.textContent = revealedMatchName || "";
+  var revealing = !!(revealedMatchName && video.currentTime >= NAME_REVEAL_TIME);
+  overlay.classList.toggle("show", revealing);
+  if (stageInner) stageInner.classList.toggle("reveal-dim", revealing);
+  if (revealedMatchName) positionNameReveal();
+}
+/* The clip stops itself on Santa looking up from his desk, before his arm
+   reaches out to the falling letters (checked frame by frame), and waits
+   there until a name is submitted; resumeStageVideoForReveal then plays it on
+   to the paper. Checked every presented frame (requestVideoFrameCallback, or
+   a requestAnimationFrame poll where that's missing) rather than on
+   timeupdate, which only fires every ~250ms and used to overshoot into the
+   arm-raised frames; after pausing it snaps back to the exact frame. A name
+   submitted before the clip even gets here (stageGateOpen) skips the stop.
+   stageAsked/stageGateOpen are read by the section-visibility play/pause
+   too, so scrolling away and back never resumes it before a name's chosen. */
+var STAGE_ASK_TIME = 16.35;
+var stageAsked = false;
+var stageGateOpen = false;
+function checkStageAsk(video, t){
+  if (!stageAsked && !stageGateOpen && t >= STAGE_ASK_TIME - 0.02){
+    stageAsked = true;
+    video.pause();
+    video.currentTime = STAGE_ASK_TIME;
+  }
+}
+function resumeStageVideoForReveal(){
+  var video = document.getElementById("stageVideoBg");
+  if (!video) return;
+  stageGateOpen = true;
+  var p = video.play();
+  if (p && p.catch) p.catch(function(){ showRevealCard(); });
+  startRevealWatchdog();
+}
+/* Once a name is submitted the video has to carry the reveal; if it can't
+   (failed to load, stuck buffering, or simply never reaching the paper scene
+   in reasonable time) the match goes on a card instead, so nobody is left on
+   an empty screen. Time while the section is scrolled away (when the video
+   is meant to be paused) doesn't count. */
+var stageSourceFailed = false;
+var revealWatchTimer = null;
+function revealOnPaper(){
+  var overlay = document.getElementById("nameRevealText");
+  return !!(overlay && overlay.classList.contains("show"));
+}
+function stageSectionVisible(){
+  var r = document.getElementById("stageSection").getBoundingClientRect();
+  return !document.hidden && r.top < window.innerHeight && r.bottom > 0;
+}
+function startRevealWatchdog(){
+  var video = document.getElementById("stageVideoBg");
+  if (!video) return;
+  clearInterval(revealWatchTimer);
+  var lastT = video.currentTime, stalledFor = 0, waited = 0;
+  var budget = Math.max(0, NAME_REVEAL_TIME - video.currentTime) + 8;
+  revealWatchTimer = setInterval(function(){
+    if (revealOnPaper()){ clearInterval(revealWatchTimer); hideRevealCard(); return; }
+    if (!stageSectionVisible()) return;
+    waited += 1;
+    if (video.currentTime > lastT + 0.05){ lastT = video.currentTime; stalledFor = 0; } else stalledFor += 1;
+    if (stageSourceFailed || video.error || stalledFor >= 5 || waited > budget){
+      clearInterval(revealWatchTimer);
+      showRevealCard();
+    }
+  }, 1000);
+}
+function showRevealCard(){
+  if (!revealedMatchName || revealOnPaper()) return;
+  document.getElementById("revealCardName").textContent = revealedMatchName;
+  document.getElementById("revealCard").hidden = false;
+}
+function hideRevealCard(){
+  document.getElementById("revealCard").hidden = true;
+}
+(function initRevealFallback(){
+  var video = document.getElementById("stageVideoBg");
+  var retry = document.getElementById("revealRetry");
+  if (!video || !retry) return;
+  Array.prototype.forEach.call(video.querySelectorAll("source"), function(src){
+    src.addEventListener("error", function(){
+      stageSourceFailed = true;
+      if (stageGateOpen) showRevealCard();
+    });
+  });
+  video.addEventListener("error", function(){ if (stageGateOpen) showRevealCard(); });
+  retry.addEventListener("click", function(){
+    hideRevealCard();
+    var from = Math.max(STAGE_ASK_TIME, Math.min(video.currentTime || 0, NAME_REVEAL_TIME - 2));
+    function go(){
+      try { video.currentTime = from; } catch (e) {}
+      var p = video.play();
+      if (p && p.catch) p.catch(function(){ showRevealCard(); });
+      startRevealWatchdog();
+    }
+    if (stageSourceFailed || video.error || video.readyState === 0){
+      stageSourceFailed = false;
+      video.addEventListener("loadedmetadata", go, {once: true});
+      video.load();
+      startRevealWatchdog();
+    } else go();
+  });
+})();
+(function initNameReveal(){
+  var video = document.getElementById("stageVideoBg");
+  if (!video) return;
+  var resizeTimer;
+  window.addEventListener("resize", function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(positionNameReveal, 150);
+  });
+  video.addEventListener("loadedmetadata", positionNameReveal);
+  video.addEventListener("timeupdate", function(){ checkStageAsk(video, video.currentTime); updateNameReveal(); });
+  video.addEventListener("seeked", updateNameReveal);
+  if (video.requestVideoFrameCallback){
+    var onFrame = function(now, meta){
+      checkStageAsk(video, meta.mediaTime);
+      if (revealedMatchName) updateNameReveal(); else applyStageFraming();
+      video.requestVideoFrameCallback(onFrame);
+    };
+    video.requestVideoFrameCallback(onFrame);
+  } else {
+    var poll = function(){
+      if (video.paused) return;
+      checkStageAsk(video, video.currentTime);
+      if (revealedMatchName) updateNameReveal(); else applyStageFraming();
+      requestAnimationFrame(poll);
+    };
+    video.addEventListener("play", function(){ requestAnimationFrame(poll); });
+  }
+  positionNameReveal();
+  updateNameReveal();
+})();
+function renderPublicRoster(){
+  var box = document.getElementById("rosterChips");
+  box.innerHTML = "";
+  if (!STATE.names.length && !DECORATIVE_ONLY.length){
+    var empty = document.createElement("span");
+    empty.className = "empty-roster";
+    empty.textContent = "La liste du Père Noël est en cours d’écriture, reviens bientôt !";
+    box.appendChild(empty);
+    return;
+  }
+  /* A chip's video position and above/below row must come from the elf's own
+     fixed slot in ELF_ORDER, never from its position in a filtered list — that
+     list shrinks whenever someone is missing from STATE.names (as Lenny now is),
+     and indexing by position there would silently hand each name AFTER the gap
+     its neighbor's spot in the video instead of its own. */
+  function addChip(n, pos, belowGroup, interactive){
+    var chip = document.createElement(interactive ? "button" : "span");
+    if (interactive) chip.type = "button";
+    chip.className = interactive ? "elf-chip" : "elf-chip elf-chip-decorative";
+    chip.dataset.videoLeft = pos.left;
+    chip.dataset.videoTop = pos.top;
+    chip.dataset.videoBottom = pos.bottom;
+    chip.dataset.below = belowGroup ? "1" : "0";
+    chip.textContent = n;
+    if (interactive){
+      chip.setAttribute("aria-label", "Voir mon résultat : " + n);
+      chip.addEventListener("click", function(){ goToSantaFor(n); });
+    } else {
+      chip.setAttribute("aria-label", n);
+    }
+    box.appendChild(chip);
+  }
+  var ordered = ELF_ORDER.filter(function(n){ return STATE.names.indexOf(n) !== -1; });
+  STATE.names.forEach(function(n){ if (ordered.indexOf(n) === -1) ordered.push(n); });
+  /* Marie's chip is pinned to the "above" row (next to Alex) instead of the
+     alternating-by-slot default, which would otherwise put her "below" since
+     her ELF_ORDER slot is odd. */
+  var GROUP_OVERRIDES = {"Marie": false};
+  ordered.forEach(function(n){
+    var idx = ELF_ORDER.indexOf(n);
+    var fallback = idx === -1 ? ordered.indexOf(n) : idx;
+    var pos = ELF_POSITIONS[fallback % ELF_POSITIONS.length];
+    var below = GROUP_OVERRIDES.hasOwnProperty(n) ? GROUP_OVERRIDES[n] : fallback % 2 === 1;
+    addChip(n, pos, below, true);
+  });
+  /* Decorative names: shown as a tag but not part of the draw, and skipped here
+     if the organizer ever re-adds them to STATE.names (then they already got a
+     real, interactive chip above). */
+  DECORATIVE_ONLY.forEach(function(n){
+    if (STATE.names.indexOf(n) !== -1) return;
+    var idx = ELF_ORDER.indexOf(n);
+    if (idx === -1) return;
+    addChip(n, ELF_POSITIONS[idx % ELF_POSITIONS.length], idx % 2 === 1, false);
+  });
+  Object.keys(DECORATIVE_POSITIONS).forEach(function(n){
+    if (STATE.names.indexOf(n) !== -1) return;
+    var pos = DECORATIVE_POSITIONS[n];
+    addChip(n, pos, pos.belowGroup !== false, false);
+  });
+  positionHeadingOnVideo();
+  repositionChips();
+  scheduleDeclutter();
+}
+function repositionChips(){
+  var box = document.getElementById("rosterChips");
+  if (!box) return;
+  var chips = box.querySelectorAll(".elf-chip");
+  chips.forEach(function(chip){
+    var pos = {left: parseFloat(chip.dataset.videoLeft), top: parseFloat(chip.dataset.videoTop), bottom: parseFloat(chip.dataset.videoBottom)};
+    var mapped = mapElfPosToContainer(pos, box, chip.dataset.below === "1", chip.classList.contains("elf-chip-decorative"));
+    chip.style.left = mapped.left + "%";
+    chip.style.top = mapped.top + "%";
+  });
+}
+
+/* Chips are placed at the % position of their matching elf in the video (already
+   lifted clear of the face, see CHIP_LIFT_FRAC), which is exactly right on desktop
+   but can land two names too close together — or, for the elves standing right at
+   the edge of the frame, pinned so close to the edge of a narrow phone screen
+   (where the mobile object-fit:contain video has zero side margin) that the chip's
+   own width runs off-screen and its text gets clipped — or, for elves near the top
+   of the frame, lifted enough that the chip spills above the component entirely.
+   Rather than abandon that per-elf placement (which is the whole point — a name
+   stays "attributed" to its character), nudge each chip in/down just enough to
+   stay inside the section's own edges, then nudge colliding chips up/down just
+   enough to clear each other (while still never crossing that same boundary),
+   leaving the rest of their position — and so which elf they sit next to —
+   untouched. */
+function declutterChips(){
+  var box = document.getElementById("rosterChips");
+  var chips = Array.prototype.slice.call(box.querySelectorAll(".elf-chip"));
+  if (!chips.length) return;
+  chips.forEach(function(c){ c.style.transform = "translate(-50%,-50%)"; });
+  var boxRect = box.getBoundingClientRect();
+  if (!boxRect.width || !boxRect.height) return;
+  /* Wider than it looks like it needs to be: this is measured once, against
+     whatever the browser's actual font metrics for the cursive webfont happen
+     to be at that moment, and real desktop browsers/OSes render that font's
+     glyph widths measurably differently from each other (and from a quick
+     local check in one engine) — a tight margin here reads as fine in testing
+     and then still lets the rightmost chip (historically Alicia, at the video's
+     own right edge) get clipped by body's overflow-x:hidden on some real
+     combination of browser/OS/zoom. */
+  var EDGE_PAD = 20;
+  var topLimit = EDGE_PAD, bottomLimit = boxRect.height - EDGE_PAD;
+  /* Two hard rules for where a chip may ever actually end up, no matter how a
+     collision search resolves. First: a "below" chip pushed down to dodge a
+     crowded neighbor must never cross the video's own bottom edge (that reads as
+     the name falling off the picture, not sitting a little lower on it). Second:
+     neither group may ever cross into the elves' hat/face band (measured at
+     56-62% of the video's own height) — an "above" chip dropping too far would
+     land on a face, and a "below" chip climbing too far would too, so each gets
+     its own safety line on its own side of that band, with real margin, not the
+     band's edge itself. Desktop's cover-mode video already fills the section and
+     has always had room above every head, so these bounds fall back to the
+     section's own edges there and nothing changes. */
+  var videoRect = getVideoRectInContainer(box);
+  var mobileBand = videoRect && videoRect.fit === "band";
+  var videoBottomLimit = mobileBand ? Math.min(bottomLimit, videoRect.oy + videoRect.rh - EDGE_PAD) : bottomLimit;
+  var videoTopLimit = mobileBand ? Math.max(topLimit, videoRect.oy + EDGE_PAD) : topLimit;
+  /* An "above" chip's ceiling used to be one flat line (e.g. 0.58) shared by
+     every character — comfortable clearance under the worst-case adult hat-top
+     (Alex, 62%), but since it's the bottom edge of EVERY above-group chip that
+     gets clamped to it (not just a fallback-search limit), one shared
+     worst-case line forces a short character like Cassie — whose own head sits
+     at 87%, nowhere near the adults' hat band — up to that same adult-height
+     ceiling instead of letting her settle right above her own head where she
+     belongs. An "above" chip's ceiling is instead read from its OWN measured
+     head position, with a small fixed clearance, so it's correct for any
+     character's actual height in the frame, not just the adult cluster this was
+     originally tuned for. A "below" chip's floor stays video-edge-based (every
+     below chip shares the same danger — falling off the picture), and its own
+     ceiling (how far it may climb back up before risking landing on a face)
+     stays tied to the one shared adult hat-line, since that's a property of the
+     scene, not of which particular elf is climbing toward it. */
+  var FACE_CLEARANCE = 0.03;
+  var ADULT_HAT_LINE = mobileBand ? (videoRect.oy + 0.70 * videoRect.rh) : null;
+  var items = chips.map(function(c){
+    var r = c.getBoundingClientRect();
+    var left = r.left-boxRect.left, right = r.right-boxRect.left;
+    var top = r.top-boxRect.top, bottom = r.bottom-boxRect.top;
+    var below = c.dataset.below === "1";
+    var ownHeadFrac = parseFloat(c.dataset.videoTop) / 100;
+    var ownTopLimit = below
+      ? (ADULT_HAT_LINE !== null ? Math.max(topLimit, ADULT_HAT_LINE) : topLimit)
+      : videoTopLimit;
+    var ownBottomLimit = below
+      ? videoBottomLimit
+      : (mobileBand ? Math.min(bottomLimit, videoRect.oy + (ownHeadFrac - FACE_CLEARANCE) * videoRect.rh) : bottomLimit);
+    var offX = 0;
+    if (left < EDGE_PAD) offX = EDGE_PAD - left;
+    else if (right > boxRect.width - EDGE_PAD) offX = (boxRect.width - EDGE_PAD) - right;
+    var offY = 0;
+    if (top < ownTopLimit) offY = ownTopLimit - top;
+    else if (bottom > ownBottomLimit) offY = ownBottomLimit - bottom;
+    return {el:c, left:left+offX, right:right+offX, top:top+offY, bottom:bottom+offY, offX:offX, offY:offY, below:below, ownTopLimit:ownTopLimit, ownBottomLimit:ownBottomLimit};
+  });
+  if (items.length < 2){
+    items.forEach(function(item){
+      if (item.offX || item.offY) item.el.style.transform = "translate(calc(-50% + " + item.offX + "px), calc(-50% + " + item.offY + "px))";
+    });
+    return;
+  }
+  items.sort(function(a,b){ return a.left - b.left; });
+  var PAD = mobileBand ? 3 : 5;
+  function overlaps(a,b){
+    return !(a.right+PAD <= b.left || b.right+PAD <= a.left || a.bottom+PAD <= b.top || b.bottom+PAD <= a.top);
+  }
+  /* Two chips in the same row (most often two "below" chips, or two "above"
+     chips, whose elves simply stand too close together for both chips' full
+     width) are cheapest to separate with a small sideways nudge — try that FIRST,
+     before the much larger vertical climb/drop below ever runs, so a pair that
+     only needed a few px of breathing room doesn't instead end up with one of
+     them yanked away to a visually disconnected row just because a clear spot
+     happened to exist there first. Checked over every pair, not just neighbors
+     in left-to-right order: a chip from a different row (e.g. Cassie, well below
+     the main line) can still sort between two same-row chips by left position
+     alone without actually overlapping either of them, which would silently
+     hide a real collision between those two from an adjacent-pairs-only check. */
+  for (var hpass = 0; hpass < 4; hpass++){
+    var hchanged = false;
+    for (var hk = 0; hk < items.length - 1; hk++){
+      for (var hj = hk + 1; hj < items.length; hj++){
+        var hA = items[hk], hB = items[hj];
+        if (overlaps(hA, hB)){
+          var leftOne = hA.left <= hB.left ? hA : hB;
+          var rightOne = hA.left <= hB.left ? hB : hA;
+          var hpush = ((leftOne.right + PAD) - rightOne.left) / 2 + 0.5;
+          leftOne.left -= hpush; leftOne.right -= hpush; leftOne.offX -= hpush;
+          rightOne.left += hpush; rightOne.right += hpush; rightOne.offX += hpush;
+          hchanged = true;
+        }
+      }
+    }
+    items.forEach(function(e){
+      var d;
+      if (e.left < EDGE_PAD){ d = EDGE_PAD - e.left; e.left += d; e.right += d; e.offX += d; hchanged = true; }
+      else if (e.right > boxRect.width - EDGE_PAD){ d = (boxRect.width - EDGE_PAD) - e.right; e.left += d; e.right += d; e.offX += d; hchanged = true; }
+    });
+    if (!hchanged) break;
+  }
+  /* The climb/descent search must stay within a few chip-heights of each chip's
+     own elf — uncapped, it can "succeed" by drifting a chip into empty space far
+     from its character just because nothing collides way up there, which solves
+     overlap but abandons the pairing. The cap itself has to scale with the video's
+     own rendered height (small on a narrow phone, large on desktop) rather than a
+     fixed pixel count, or it's either too tight on desktop or — as on the narrowest
+     phones, where the whole video band is barely 150-200px tall — large enough to
+     escape clear over the video and the heading above it. */
+  var STEP = 4;
+  var climbCap = videoRect ? Math.max(STEP * 2, videoRect.rh * 0.32) : 160;
+  var MAX_ATTEMPTS = Math.max(2, Math.ceil(climbCap / STEP));
+  var placed = [];
+  /* Chips climbing up to clear a face/hat can just as easily climb into the
+     heading itself — treat it as a standing obstacle so the upward search routes
+     around it too, not just around other chips. */
+  var headingEl = document.getElementById("rosterHeading");
+  if (headingEl){
+    var hr = headingEl.getBoundingClientRect();
+    if (hr.width && hr.height){
+      placed.push({left:hr.left-boxRect.left, right:hr.right-boxRect.left, top:hr.top-boxRect.top, bottom:hr.bottom-boxRect.top});
+    }
+  }
+  function searchUp(item){
+    var ownTop = item.ownTopLimit;
+    var chosen = null, offset, top, bottom, test, i;
+    for (i = 0; i <= MAX_ATTEMPTS; i++){
+      offset = -i * STEP;
+      top = item.top + offset; bottom = item.bottom + offset;
+      if (top < ownTop){ offset += (ownTop - top); top = item.top+offset; bottom = item.bottom+offset; }
+      test = {left:item.left, right:item.right, top:top, bottom:bottom};
+      if (!placed.some(function(p){ return overlaps(test, p); })){ chosen = offset; break; }
+      if (top <= ownTop + 0.5) break;
+    }
+    return chosen;
+  }
+  function searchDown(item){
+    var ownBottom = item.ownBottomLimit;
+    var chosen = null, offset, top, bottom, test, i;
+    for (i = 0; i <= MAX_ATTEMPTS; i++){
+      offset = i * STEP;
+      top = item.top + offset; bottom = item.bottom + offset;
+      if (bottom > ownBottom){ offset -= (bottom - ownBottom); top = item.top+offset; bottom = item.bottom+offset; }
+      test = {left:item.left, right:item.right, top:top, bottom:bottom};
+      if (!placed.some(function(p){ return overlaps(test, p); })){ chosen = offset; break; }
+      if (bottom >= ownBottom - 0.5) break;
+    }
+    return chosen;
+  }
+  var results = [];
+  items.forEach(function(item){
+    /* Resolve collisions by moving further away from the video first — UP into the
+       open sky for a chip above a head, DOWN into the open background for a chip
+       below a video that doesn't fill the section — falling back to the opposite
+       direction only once that preferred direction is exhausted. Two separate
+       one-directional searches rather than a zigzag, so a chip never settles back
+       onto a face (or back into the video it was deliberately placed outside of)
+       just because that was the next step in an alternating pattern. */
+    var chosen = item.below ? searchDown(item) : searchUp(item);
+    if (chosen === null){
+      chosen = item.below ? searchUp(item) : searchDown(item);
+    }
+    if (chosen === null) chosen = 0;
+    var entry = {el:item.el, left:item.left, right:item.right, top:item.top+chosen, bottom:item.bottom+chosen, offX:item.offX, totalOffY:item.offY+chosen};
+    placed.push(entry);
+    results.push(entry);
+  });
+  /* Two chips whose elves simply stand too close together for both chips' full
+     width (most often among the few right at a screen edge, since the edge-clamp
+     above pulls several of them toward the same safe strip) can still overlap
+     here — vertical offsets alone can't separate two boxes that already overlap
+     on the x-axis wherever they end up on the y-axis. As a last pass, nudge any
+     such pair apart sideways by just enough to clear each other, re-clamping to
+     the section's edges and repeating a few times since separating one pair can
+     push it into its other neighbor (three names crowded into the same corner) or
+     back past the screen edge. Checked over every pair, not just neighbors in
+     left-to-right order, for the same reason as the earlier horizontal pass:
+     a chip from a different row can sort in between two same-row chips by
+     left position alone without overlapping either of them, which would hide
+     a real overlap between those two from an adjacent-pairs-only check. */
+  for (var pass = 0; pass < 4; pass++){
+    results.sort(function(a,b){ return a.left - b.left; });
+    var changed = false;
+    for (var k = 0; k < results.length - 1; k++){
+      for (var j = k + 1; j < results.length; j++){
+        var A = results[k], B = results[j];
+        if (overlaps(A, B)){
+          var leftOne = A.left <= B.left ? A : B;
+          var rightOne = A.left <= B.left ? B : A;
+          var push = ((leftOne.right + PAD) - rightOne.left) / 2 + 0.5;
+          leftOne.left -= push; leftOne.right -= push; leftOne.offX -= push;
+          rightOne.left += push; rightOne.right += push; rightOne.offX += push;
+          changed = true;
+        }
+      }
+    }
+    results.forEach(function(e){
+      var d;
+      if (e.left < EDGE_PAD){ d = EDGE_PAD - e.left; e.left += d; e.right += d; e.offX += d; changed = true; }
+      else if (e.right > boxRect.width - EDGE_PAD){ d = (boxRect.width - EDGE_PAD) - e.right; e.left += d; e.right += d; e.offX += d; changed = true; }
+    });
+    if (!changed) break;
+  }
+  results.forEach(function(entry){
+    if (entry.offX || entry.totalOffY) entry.el.style.transform = "translate(calc(-50% + " + entry.offX + "px), calc(-50% + " + entry.totalOffY + "px))";
+  });
+}
+function scheduleDeclutter(){
+  /* Must measure against the real webfont metrics (Mountains of Christmas), not a
+     fallback — document.fonts.ready is safe to re-attach on every call: once the
+     fonts have actually loaded it resolves immediately on every subsequent .then(). */
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      requestAnimationFrame(function(){ requestAnimationFrame(declutterChips); });
+    });
+  } else {
+    requestAnimationFrame(function(){ requestAnimationFrame(declutterChips); });
+  }
+}
+var declutterResizeTimer;
+window.addEventListener("resize", function(){
+  clearTimeout(declutterResizeTimer);
+  declutterResizeTimer = setTimeout(function(){
+      positionHeadingOnVideo();
+    repositionChips();
+    scheduleDeclutter();
+    scheduleLightWeave();
+  }, 200);
+});
+
+/* ---------------- light string woven through the letters of the heading ----------------
+   Each letter of "Les lutins de cette année" becomes its own span so its real on-screen
+   position can be measured; the light string's wire and bulbs are then drawn threading
+   alternately just above and just below each letter in turn, so the string genuinely
+   weaves in and out of the word rather than sitting as a frame around it. */
+function wrapHeadingChars(){
+  var textEl = document.getElementById("rosterHeadingText");
+  if (!textEl || textEl.dataset.wrapped) return;
+  var text = textEl.textContent;
+  textEl.textContent = "";
+  // "cette" sits over the brightest part of the background (the tree and the
+  // white lights), so its letters get a deeper shadow (.lw-strong).
+  var strongStart = text.indexOf("cette"), strongEnd = strongStart + 5;
+  for (var i = 0; i < text.length; i++){
+    var ch = text[i];
+    if (ch === " "){
+      textEl.appendChild(document.createTextNode(" "));
+    } else {
+      var span = document.createElement("span");
+      span.className = "lw-char" + (strongStart >= 0 && i >= strongStart && i < strongEnd ? " lw-strong" : "");
+      span.textContent = ch;
+      textEl.appendChild(span);
+    }
+  }
+  textEl.dataset.wrapped = "1";
+}
+function buildLightWeave(){
+  var heading = document.getElementById("rosterHeading");
+  var svg = document.getElementById("lightWeaveSvg");
+  if (!heading || !svg) return;
+  var chars = Array.prototype.slice.call(heading.querySelectorAll(".lw-char"));
+  if (!chars.length) return;
+  var hRect = heading.getBoundingClientRect();
+  if (!hRect.width || !hRect.height) return;
+  svg.setAttribute("viewBox", "0 0 " + hRect.width.toFixed(1) + " " + hRect.height.toFixed(1));
+
+  var colors = ["#dd4b3f", "#eab654", "#4fae92", "#f0a89b", "#6a8fe0"];
+  /* Deterministic pseudo-random (same seed -> same look every render/resize,
+     instead of flickering into a new layout each time) so the string reads as
+     "a real strand someone draped there", not a mathematically clean sine wave. */
+  function rand(seed){
+    var x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+    return x - Math.floor(x);
+  }
+  var points = [];
+  var lastUp = null;
+  chars.forEach(function(c, i){
+    var r = c.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    var jitterX = (rand(i * 2.1) - 0.5) * r.width * 0.5;
+    var cx = r.left - hRect.left + r.width / 2 + jitterX;
+    var center = r.top - hRect.top + r.height / 2;
+    /* Mostly alternate above/below, but let a run of 2-3 bulbs land on the same
+       side sometimes, and vary how far each one swings — some barely clear the
+       glyph, some sit almost dead-center on top of it — for a tangled, hand-
+       draped feel instead of a perfectly even zigzag. */
+    var up;
+    if (lastUp === null) up = rand(i) > 0.5;
+    else up = rand(i * 3.7 + 1) < 0.68 ? !lastUp : lastUp;
+    lastUp = up;
+    var ampFactor = 0.08 + rand(i * 5.3 + 2) * 0.4;
+    var amp = r.height * ampFactor;
+    var cy = up ? (center - amp) : (center + amp);
+    points.push({x: cx, y: cy});
+  });
+  if (points.length < 2){ svg.innerHTML = ""; return; }
+
+  var d = "M " + points[0].x.toFixed(1) + "," + points[0].y.toFixed(1);
+  for (var i = 0; i < points.length - 1; i++){
+    var p0 = points[i], p1 = points[i + 1];
+    var c1x = p0.x + (p1.x - p0.x) / 3, c1y = p0.y;
+    var c2x = p0.x + 2 * (p1.x - p0.x) / 3, c2y = p1.y;
+    d += " C " + c1x.toFixed(1) + "," + c1y.toFixed(1) + " " + c2x.toFixed(1) + "," + c2y.toFixed(1) + " " + p1.x.toFixed(1) + "," + p1.y.toFixed(1);
+  }
+
+  var parts = ['<path class="lw-wire" d="' + d + '"/>'];
+  points.forEach(function(p, i){
+    var color = colors[i % colors.length];
+    var delay = ((i % 5) * 0.2).toFixed(2);
+    parts.push('<circle class="lw-bulb-glow" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="3.8" fill="' + color + '"/>');
+    parts.push('<circle class="lw-bulb" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="2" fill="' + color + '" style="animation-delay:' + delay + 's"/>');
+  });
+  svg.innerHTML = parts.join("");
+}
+function scheduleLightWeave(){
+  wrapHeadingChars();
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      requestAnimationFrame(function(){ requestAnimationFrame(buildLightWeave); });
+    });
+  } else {
+    requestAnimationFrame(function(){ requestAnimationFrame(buildLightWeave); });
+  }
+}
+scheduleLightWeave();
+var lightWeaveResizeTimer;
+window.addEventListener("resize", function(){
+  clearTimeout(lightWeaveResizeTimer);
+  lightWeaveResizeTimer = setTimeout(scheduleLightWeave, 200);
+});
+
+/* ---------------- names already played (shared by every visitor) ----------------
+   Choosing a name registers that person: the name is claimed in a small shared
+   list (Firebase Firestore, through its REST API), and from then on it is gone
+   from the list on every device, so nobody else can open that person's result.
+   Claims are stored under the current draw, so a new draw starts empty. The
+   list is only switched on where PLAYED_DB is filled in (the GitHub Pages copy);
+   elsewhere the site behaves as before. */
+var PLAYED_DB = {projectId: "", apiKey: ""};
+var playedNames = [];
+function playedEnabled(){ return !!(PLAYED_DB.projectId && PLAYED_DB.apiKey); }
+function drawId(){
+  var str = Object.keys(STATE.assignments || {}).sort().map(function(k){ return STATE.assignments[k].payload; }).join("|");
+  var h = 5381;
+  for (var i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+  return "d" + h.toString(36);
+}
+function playedUrl(extra){
+  return "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(PLAYED_DB.projectId) +
+    "/databases/(default)/documents/draws/" + drawId() + "/played" + (extra || "") +
+    ((extra || "").indexOf("?") === -1 ? "?" : "&") + "key=" + encodeURIComponent(PLAYED_DB.apiKey);
+}
+function isPlayed(name){ return playedNames.indexOf(name) !== -1; }
+function applyPlayed(){
+  populateNameSelect();
+  Array.prototype.forEach.call(document.querySelectorAll("#rosterChips button.elf-chip"), function(chip){
+    var played = isPlayed(chip.textContent);
+    chip.classList.toggle("elf-chip-played", played);
+    chip.disabled = played;
+    chip.setAttribute("aria-label", played ? chip.textContent + " (déjà joué)" : "Voir mon résultat : " + chip.textContent);
+  });
+}
+function refreshPlayed(){
+  if (!playedEnabled()) return Promise.resolve();
+  return fetch(playedUrl("?pageSize=300"), {cache: "no-store"}).then(function(res){
+    if (!res.ok) throw new Error("http " + res.status);
+    return res.json();
+  }).then(function(data){
+    playedNames = (data.documents || []).map(function(d){
+      return d.fields && d.fields.name ? d.fields.name.stringValue : "";
+    }).filter(Boolean);
+    applyPlayed();
+  }).catch(function(){ /* keep the last known list */ });
+}
+/* Claims a name. Resolves "ok", "taken" (someone already played it) or
+   "error" (the list couldn't be reached). Creating a document that already
+   exists is refused by Firestore, so two people can't claim the same name. */
+function claimName(name){
+  if (!playedEnabled()) return Promise.resolve("ok");
+  return fetch(playedUrl("?documentId=" + encodeURIComponent(slug(name))), {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({fields: {name: {stringValue: name}, at: {timestampValue: new Date().toISOString()}}})
+  }).then(function(res){
+    if (res.ok){ if (!isPlayed(name)) playedNames.push(name); applyPlayed(); return "ok"; }
+    if (res.status === 409){ refreshPlayed(); return "taken"; }
+    return "error";
+  }).catch(function(){ return "error"; });
+}
+document.addEventListener("visibilitychange", function(){ if (!document.hidden) refreshPlayed(); });
+
+function populateNameSelect(){
+  var sel = document.getElementById("nameSelect");
+  var current = sel.value;
+  var remaining = STATE.names.filter(function(n){ return !isPlayed(n); });
+  var allDone = STATE.names.length > 0 && remaining.length === 0;
+  sel.innerHTML = '<option value="" disabled' + (current ? "" : " selected") + '>' + (allDone ? "Tout le monde a joué !" : "Quel lutin es-tu ?") + '</option>';
+  remaining.forEach(function(n){
+    var opt = document.createElement("option");
+    opt.value = n; opt.textContent = n;
+    sel.appendChild(opt);
+  });
+  if (current && remaining.indexOf(current) !== -1) sel.value = current;
+}
+
+
+/* ---------------- stage sequence ---------------- */
+var stageBusy = false;
+function setSpeech(text){ document.getElementById("speechBubble").textContent = text; }
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+/* The name written on Santa's sheet of paper in the video (see
+   .name-reveal-text / updateNameReveal, stage-video section below) — the
+   person's OWN secret-santa MATCH (who they're buying a gift for), set here
+   once it's actually been decoded, never the raw <select> value. Declared up
+   as a var so updateNameReveal (wired to the video earlier in the script)
+   can read it before this point runs. */
+var revealedMatchName = "";
+
+async function playRevealSequence(displayName, matchName){
+  if (stageBusy) return;
+  stageBusy = true;
+  var flash = document.getElementById("flashNote");
+  var form = document.getElementById("nameForm");
+  flash.textContent = "";
+  flash.className = "flash-note";
+  form.querySelector("button").disabled = true;
+  form.classList.add("gone");
+  document.getElementById("speechBubble").classList.add("gone");
+
+  revealedMatchName = matchName;
+  resumeStageVideoForReveal();
+
+  setSpeech("Ho ho ho, " + displayName + " ! Laisse-moi regarder ma liste…");
+  await sleep(900);
+  setSpeech("Une seconde, je cherche ton nom…");
+  await sleep(1200);
+  setSpeech("J'ai trouvé ton nom, " + displayName + " ! Regarde l'écran…");
+  await sleep(500);
+  setSpeech("Garde ça entre nous, " + displayName + " ! Joyeux cadeaux !");
+  stageBusy = false;
+}
+
+async function handleNameSubmit(name){
+  var flash = document.getElementById("flashNote");
+  if (!name){ flash.textContent = "Choisis ton prénom dans la liste !"; flash.className="flash-note error"; return; }
+  var mySlug = slug(name);
+  var rec = STATE.assignments[mySlug];
+  if (!rec){
+    flash.textContent = STATE.drawn
+      ? "Le Père Noël n'a pas encore ce prénom sur sa liste : demande à l'organisateur·rice de refaire le tirage."
+      : "Le tirage n'a pas encore eu lieu, reviens quand le Père Noël aura tiré les noms !";
+    flash.className = "flash-note error";
+    return;
+  }
+  var payload = unpack(rec.payload);
+  if (!payload || !payload.m){
+    flash.textContent = "Le papier de ce prénom s'est effacé ! Réessaie, ou préviens l'organisateur·rice.";
+    flash.className = "flash-note error";
+    return;
+  }
+  if (stageBusy) return;
+  var submitBtn = document.querySelector("#nameForm button");
+  submitBtn.disabled = true;
+  var claim = await claimName(rec.name || name);
+  submitBtn.disabled = false;
+  if (claim === "taken"){
+    flash.textContent = "Ce prénom a déjà été joué ! Si c'est bien toi, demande à l'organisateur·rice.";
+    flash.className = "flash-note error";
+    return;
+  }
+  if (claim === "error"){
+    flash.textContent = "Le Père Noël n'arrive pas à consulter sa liste. Vérifie ta connexion et réessaie.";
+    flash.className = "flash-note error";
+    return;
+  }
+  flash.textContent = "";
+  await playRevealSequence(rec.name || name, payload.m);
+}
+
+document.getElementById("nameForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var sel = document.getElementById("nameSelect");
+  handleNameSubmit(sel.value);
+});
+
+/* reveal-by-personal-link (bonus: works even without visiting the main page first) */
+(function checkHashReveal(){
+  var hash = window.location.hash || "";
+  var m = hash.match(/reveal=([^&]+)/);
+  if (!m) return;
+  var payload = unpack(decodeURIComponent(m[1]));
+  if (!payload || !payload.n || !payload.m) return;
+  window.addEventListener("load", function(){
+    var sel = document.getElementById("nameSelect");
+    if (sel){
+      sel.disabled = true;
+      if (STATE.names.indexOf(payload.n) !== -1) sel.value = payload.n;
+    }
+    setTimeout(function(){ playRevealSequence(payload.n, payload.m); }, 500);
+  });
+})();
+
+/* ---------------- publishing: the organizer's own device bakes the draw into the page ---------------- */
+var artifactCap = null, artifactReady = (async function(){
+  try{ artifactCap = (window.claude && window.claude.use) ? await window.claude.use("artifact") : null; }
+  catch(e){ artifactCap = null; }
+  return artifactCap;
+})();
+
+function resetCloneForPublish(clone){
+  function q(sel){ return clone.querySelector(sel); }
+  var cloneBody = q("body"); if (cloneBody) cloneBody.classList.remove("page-santa");
+  var backdrop = q("#modalBackdrop"); if (backdrop) backdrop.classList.remove("open");
+  var gate = q("#gateView"); if (gate) gate.style.display = "";
+  var ws = q("#workshopView"); if (ws) ws.style.display = "none";
+  var passInput = q("#passInput"); if (passInput) passInput.value = "";
+  var gateError = q("#gateError"); if (gateError) gateError.textContent = "";
+  var rosterInput = q("#rosterNameInput"); if (rosterInput) rosterInput.value = "";
+  var speech = q("#speechBubble"); if (speech) speech.textContent = "Ho ho ho ! Quel est ton prénom ?";
+  var select = q("#nameSelect"); if (select){ select.value = ""; select.removeAttribute("disabled"); }
+  var nameFormClone = q("#nameForm"); if (nameFormClone) nameFormClone.classList.remove("gone");
+  if (speech) speech.classList.remove("gone");
+  var nameReveal = q("#nameRevealText"); if (nameReveal){ nameReveal.classList.remove("show"); nameReveal.textContent = ""; }
+  var revealCard = q("#revealCard"); if (revealCard) revealCard.hidden = true;
+  var stageInnerClone = q("#stageInner"); if (stageInnerClone) stageInnerClone.classList.remove("reveal-dim");
+  var flash = q("#flashNote"); if (flash){ flash.textContent = ""; flash.className = "flash-note"; }
+  var snowfield = q("#snowfield"); if (snowfield) snowfield.innerHTML = "";
+  var injectedStyle = q("#snowKeyframesStyle"); if (injectedStyle) injectedStyle.remove();
+  var submitBtn = q("#nameForm button"); if (submitBtn) submitBtn.removeAttribute("disabled");
+  var drawNote = q("#drawNote"); if (drawNote){ drawNote.textContent = ""; drawNote.className = "flash-note"; }
+  var pubStatus = q("#publishStatus"); if (pubStatus){ pubStatus.textContent = ""; pubStatus.className = "flash-note"; }
+  var overlay = q("#introOverlay"); if (overlay){ overlay.classList.remove("hide"); overlay.style.display = ""; }
+  var introLoading = q("#introLoading"); if (introLoading) introLoading.style.display = "";
+  var introPercent = q("#introPercent"); if (introPercent) introPercent.textContent = "0%";
+  var introEnter = q("#introEnter"); if (introEnter){ introEnter.classList.remove("show"); }
+}
+
+async function publishState(newState){
+  await artifactReady;
+  if (!artifactCap) return {ok:false, reason:"fonction indisponible (ouvre ce lien depuis ton propre compte Claude)"};
+  try{
+    var clone = document.documentElement.cloneNode(true);
+    var seedEl = clone.querySelector("#seedData");
+    if (seedEl) seedEl.textContent = JSON.stringify(newState);
+    resetCloneForPublish(clone);
+    var html = "<!doctype html>\n" + clone.outerHTML;
+    await artifactCap.publish(html);
+    return {ok:true};
+  }catch(e){
+    return {ok:false, reason:(e && e.code) || "erreur inconnue"};
+  }
+}
+
+/* ---------------- Organizer Workshop ---------------- */
+var backdrop = document.getElementById("modalBackdrop");
+var gateView = document.getElementById("gateView");
+var workshopView = document.getElementById("workshopView");
+var unlocked = false;
+var workingCfg = {names:[], exclusions:[], drawn:false, assignments:{}};
+
+var modalLastFocus = null;
+function getFocusable(){
+  return Array.prototype.slice.call(backdrop.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )).filter(function(el){ return el.offsetParent !== null; });
+}
+function openModal(){
+  modalLastFocus = document.activeElement;
+  backdrop.classList.add("open");
+  var focusable = getFocusable();
+  if (focusable.length) focusable[0].focus();
+}
+function closeModal(){
+  backdrop.classList.remove("open");
+  if (modalLastFocus && typeof modalLastFocus.focus === "function") modalLastFocus.focus();
+}
+/* There's no visible button for the organiser area: it opens when the
+   address ends in #atelier, and that is then cleared from the address bar. */
+function openWorkshopFromHash(){
+  if (window.location.hash !== "#atelier") return;
+  history.replaceState(null, "", window.location.pathname + window.location.search);
+  openModal();
+}
+window.addEventListener("hashchange", openWorkshopFromHash);
+openWorkshopFromHash();
+document.getElementById("modalClose").addEventListener("click", closeModal);
+document.getElementById("gateCancel").addEventListener("click", closeModal);
+backdrop.addEventListener("click", function(e){ if (e.target === backdrop) closeModal(); });
+backdrop.addEventListener("keydown", function(e){
+  if (!backdrop.classList.contains("open")) return;
+  if (e.key === "Escape"){ closeModal(); return; }
+  if (e.key !== "Tab") return;
+  var focusable = getFocusable();
+  if (!focusable.length) return;
+  var first = focusable[0], last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+});
+
+document.getElementById("passSubmit").addEventListener("click", function(){
+  var val = document.getElementById("passInput").value.trim().toLowerCase();
+  var err = document.getElementById("gateError");
+  if (val === WORKSHOP_PASSPHRASE){
+    unlocked = true;
+    err.textContent = "";
+    gateView.style.display = "none";
+    workshopView.style.display = "block";
+    initWorkshop();
+  } else {
+    err.textContent = "Ce n'est pas ça, demande le mot de passe à l'organisateur·rice.";
+  }
+});
+document.getElementById("passInput").addEventListener("keydown", function(e){
+  if (e.key === "Enter") document.getElementById("passSubmit").click();
+});
+
+function initWorkshop(){
+  workingCfg = JSON.parse(JSON.stringify(STATE));
+  if (!workingCfg.exclusions) workingCfg.exclusions = [];
+  if (!workingCfg.names) workingCfg.names = [];
+  if (!workingCfg.assignments) workingCfg.assignments = {};
+  renderWorkshop();
+}
+
+function renderWorkshop(){
+  var pre = document.getElementById("preDrawView");
+  var post = document.getElementById("postDrawView");
+  if (workingCfg.drawn){
+    pre.style.display = "none";
+    post.style.display = "block";
+    renderResults();
+  } else {
+    pre.style.display = "block";
+    post.style.display = "none";
+    renderRosterEditor();
+  }
+}
+
+function renderRosterEditor(){
+  var list = document.getElementById("rosterEditList");
+  list.innerHTML = "";
+  workingCfg.names.forEach(function(n, idx){
+    var pill = document.createElement("span");
+    pill.className = "pill";
+    var txt = document.createElement("span");
+    txt.textContent = n;
+    pill.appendChild(txt);
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.textContent = "✕"; btn.title = "Retirer";
+    btn.addEventListener("click", function(){
+      workingCfg.names.splice(idx,1);
+      workingCfg.exclusions = workingCfg.exclusions.filter(function(p){ return p[0]!==n && p[1]!==n; });
+      renderWorkshop();
+    });
+    pill.appendChild(btn);
+    list.appendChild(pill);
+  });
+
+  var exclA = document.getElementById("exclA"), exclB = document.getElementById("exclB");
+  exclA.innerHTML = exclB.innerHTML = "";
+  workingCfg.names.forEach(function(n){
+    exclA.appendChild(new Option(n,n));
+    exclB.appendChild(new Option(n,n));
+  });
+
+  var exList = document.getElementById("exclusionList");
+  exList.innerHTML = "";
+  workingCfg.exclusions.forEach(function(p, idx){
+    var pill = document.createElement("span");
+    pill.className = "pill";
+    var txt = document.createElement("span");
+    txt.textContent = p[0] + " ↔ " + p[1];
+    pill.appendChild(txt);
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.textContent = "✕";
+    btn.addEventListener("click", function(){ workingCfg.exclusions.splice(idx,1); renderWorkshop(); });
+    pill.appendChild(btn);
+    exList.appendChild(pill);
+  });
+
+  var drawBtn = document.getElementById("drawBtn");
+  drawBtn.disabled = workingCfg.names.length < 3;
+  document.getElementById("drawNote").textContent = workingCfg.names.length < 3
+    ? "Ajoute au moins 3 personnes avant que le Père Noël puisse tirer les noms."
+    : "";
+}
+
+document.getElementById("rosterAddBtn").addEventListener("click", function(){
+  var input = document.getElementById("rosterNameInput");
+  var name = input.value.trim();
+  if (!name) return;
+  if (workingCfg.names.some(function(n){ return slug(n)===slug(name); })){
+    input.value=""; return;
+  }
+  workingCfg.names.push(name);
+  input.value = "";
+  renderWorkshop();
+});
+document.getElementById("rosterNameInput").addEventListener("keydown", function(e){
+  if (e.key === "Enter"){ e.preventDefault(); document.getElementById("rosterAddBtn").click(); }
+});
+document.getElementById("exclAddBtn").addEventListener("click", function(){
+  var a = document.getElementById("exclA").value, b = document.getElementById("exclB").value;
+  if (!a || !b || a===b) return;
+  var exists = workingCfg.exclusions.some(function(p){ return pairKey(p[0],p[1])===pairKey(a,b); });
+  if (!exists){ workingCfg.exclusions.push([a,b]); renderWorkshop(); }
+});
+
+document.getElementById("drawBtn").addEventListener("click", async function(){
+  var note = document.getElementById("drawNote");
+  var result = computeDraw(workingCfg.names, workingCfg.exclusions);
+  if (!result){
+    note.textContent = "Impossible de trouver un tirage valide avec ces exclusions, essaie d'en retirer une.";
+    note.className = "flash-note error";
+    return;
+  }
+  note.textContent = "Publication du tirage pour toute la famille…";
+  note.className = "flash-note";
+
+  var newAssignments = {};
+  Object.keys(result).forEach(function(giver){
+    var match = result[giver];
+    var s = slug(giver);
+    newAssignments[s] = {name:giver, payload: pack({n:giver, m:match})};
+  });
+  var newState = {names: workingCfg.names.slice(), exclusions: workingCfg.exclusions.slice(), drawn:true, assignments:newAssignments};
+
+  var res = await publishState(newState);
+  var pubStatus = document.getElementById("publishStatus");
+  if (res.ok){
+    STATE = newState;
+    workingCfg = JSON.parse(JSON.stringify(STATE));
+    populateNameSelect();
+    renderPublicRoster();
+    refreshPlayed();
+    renderWorkshop();
+    pubStatus.textContent = "Publié ! Tout le monde avec ce lien peut déjà voir son résultat, sans avoir besoin d'un compte.";
+    pubStatus.className = "flash-note";
+  } else {
+    workingCfg.drawn = true;
+    workingCfg.assignments = newAssignments;
+    renderWorkshop();
+    pubStatus = document.getElementById("publishStatus");
+    pubStatus.textContent = "Pas encore publié pour toute la famille (" + res.reason + "). Les liens ci-dessous fonctionnent déjà : envoie-les en attendant, puis relance le tirage depuis ton propre compte Claude pour le rendre permanent.";
+    pubStatus.className = "flash-note error";
+  }
+});
+
+function renderResults(){
+  var box = document.getElementById("resultsList");
+  box.innerHTML = "";
+  var lines = [];
+  var origin = window.location.origin + window.location.pathname;
+  Object.keys(workingCfg.assignments).forEach(function(k){
+    var rec = workingCfg.assignments[k];
+    var row = document.createElement("div");
+    row.className = "result-row";
+    var who = document.createElement("span");
+    who.className = "who";
+    who.textContent = rec.name;
+    row.appendChild(who);
+    var link = origin + "#reveal=" + rec.payload;
+    var btn = document.createElement("button");
+    btn.className = "copy-small"; btn.type="button"; btn.textContent = "Copier le lien";
+    btn.addEventListener("click", function(l, el){
+      return function(){
+        navigator.clipboard.writeText(l).then(function(){
+          var old = el.textContent; el.textContent = "Copié !";
+          setTimeout(function(){ el.textContent = old; }, 1400);
+        });
+      };
+    }(link, btn));
+    row.appendChild(btn);
+    box.appendChild(row);
+    lines.push(rec.name + ": " + link);
+  });
+  document.getElementById("bulkResults").value = lines.join("\n");
+}
+
+document.getElementById("copyAllBtn").addEventListener("click", function(){
+  navigator.clipboard.writeText(document.getElementById("bulkResults").value).then(function(){
+    var el = document.getElementById("copyAllBtn");
+    var old = el.textContent; el.textContent = "Copié !";
+    setTimeout(function(){ el.textContent = old; }, 1400);
+  });
+});
+
+document.getElementById("redrawBtn").addEventListener("click", async function(){
+  if (!window.confirm("Cela va effacer le tirage actuel, et tous les liens déjà envoyés cesseront de fonctionner. Continuer ?")) return;
+  var newState = {names: workingCfg.names.slice(), exclusions: workingCfg.exclusions.slice(), drawn:false, assignments:{}};
+  var res = await publishState(newState);
+  if (res.ok){
+    STATE = newState;
+    workingCfg = JSON.parse(JSON.stringify(STATE));
+    populateNameSelect();
+    renderPublicRoster();
+    refreshPlayed();
+  } else {
+    workingCfg = {names: workingCfg.names.slice(), exclusions: workingCfg.exclusions.slice(), drawn:false, assignments:{}};
+    var note = document.getElementById("drawNote");
+    note.textContent = "Le tirage a été effacé ici, mais pas republié pour toute la famille (" + res.reason + ").";
+    note.className = "flash-note error";
+  }
+  renderWorkshop();
+});
+
+renderPublicRoster();
+populateNameSelect();
+refreshPlayed();
+
+})();
+</script>
+
+</body></html>
