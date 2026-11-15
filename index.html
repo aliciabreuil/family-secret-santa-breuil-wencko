@@ -316,7 +316,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .stage-section{
   position:relative;z-index:4;overflow:hidden;min-height:1180px;
   scroll-snap-align:start;
-  background-color:var(--night-1);
+  background-color:#120c0d;
 }
 /* Replaced the old static background-image with a looping video (see
    #stageVideoBg) — object-position alone can't tell JS where the video's own
@@ -330,7 +330,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .stage-section::before{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-  background:linear-gradient(180deg, rgba(11,23,51,.2) 0%, rgba(11,23,51,.08) 30%, rgba(11,23,51,.1) 68%, rgba(11,23,51,.6) 88%, var(--night-1) 100%);
+  /* Fades into the fireside near-black of Santa's page (#120c0d). */
+  background:linear-gradient(180deg, rgba(18,12,13,.2) 0%, rgba(18,12,13,.08) 30%, rgba(18,12,13,.1) 68%, rgba(18,12,13,.6) 88%, #120c0d 100%);
 }
 /* The person's match, written on the blank sheet Santa lays on his desk at
    the end of the clip: a fixed NAME_BOX_W x NAME_BOX_H box mapped onto the
